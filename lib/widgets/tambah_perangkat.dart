@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
 class Tambah_perangkat extends StatefulWidget {
+  const Tambah_perangkat({super.key});
+
   @override
   _TambahPerangkatState createState() => _TambahPerangkatState();
 }
@@ -20,7 +22,9 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Tambah Perangkat",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -29,7 +33,7 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
+                const Center(
                   child: Text(
                     'Tambah Perangkat',
                     style: TextStyle(
@@ -39,14 +43,14 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildLabeledTextField('Nama', _nameController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Perangkat ID', _perangkatid),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Keterangan', _keterangan),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Greenhouse',
                   style: TextStyle(
                     fontSize: 16,
@@ -54,12 +58,12 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Container(
                   width: double.infinity,
                   height: 50.0, // Set the height of the container
                   decoration: BoxDecoration(
-                    color: Color(0xFFBAC6CB),
+                    color: const Color(0xFFBAC6CB),
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                   child: Row(
@@ -68,35 +72,37 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                         child: Container(
                           height: 50.0, // Match the height of the button
                           decoration: BoxDecoration(
-                            color: Color(0xFFBAC6CB),
+                            color: const Color(0xFFBAC6CB),
                             borderRadius: BorderRadius.circular(50.0),
                           ),
                         ),
                       ),
                       Container(
                         height: 50.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(50.0),
                             bottomRight: Radius.circular(50.0),
                           ),
                         ),
                         child: ElevatedButton(
-                          
                           onPressed: () => _showGreenhouseDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF294A52),
-                             // Make the button background transparent
+                            backgroundColor: const Color(0xFF294A52),
+                            // Make the button background transparent
                             shape: RoundedRectangleBorder(
-                             borderRadius: BorderRadius.circular(50.0)
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 20.0), // Padding for the button text
-                            elevation: 0, // Remove the button's shadow to match the container
+                                borderRadius: BorderRadius.circular(50.0)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal:
+                                    20.0), // Padding for the button text
+                            elevation:
+                                0, // Remove the button's shadow to match the container
                           ),
                           child: Text(
                             _selectedGreenhouse ?? 'Pilih Greenhouse',
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color to white
+                            style: const TextStyle(
+                              color:
+                                  Colors.white, // Set the text color to white
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -105,39 +111,40 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                     ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    final newDevice = {
-                      'name': _nameController.text,
-                      'id': _perangkatid.text,
-                      'description': _keterangan.text,
-                      'greenhouse': _selectedGreenhouse,
-                    };
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final newDevice = {
+                            'name': _nameController.text,
+                            'id': _perangkatid.text,
+                            'description': _keterangan.text,
+                            'greenhouse': _selectedGreenhouse,
+                          };
 
-                    Navigator.pop(context, newDevice); // Mengembalikan data baru
-                  }
-                },
-                child: Text('Tambah'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF294A52),
-                  foregroundColor: Colors.white,
-                ),
+                          Navigator.pop(
+                              context, newDevice); // Mengembalikan data baru
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF294A52),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Tambah'),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Kembali'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Kembali'),
                     ),
                   ],
                 ),
@@ -154,12 +161,12 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pilih Greenhouse'),
+          title: const Text('Pilih Greenhouse'),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
                 ListTile(
-                  title: Text('Greenhouse 1'),
+                  title: const Text('Greenhouse 1'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 1';
@@ -168,7 +175,7 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                   },
                 ),
                 ListTile(
-                  title: Text('Greenhouse 2'),
+                  title: const Text('Greenhouse 2'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 2';
@@ -177,7 +184,7 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                   },
                 ),
                 ListTile(
-                  title: Text('Greenhouse 3'),
+                  title: const Text('Greenhouse 3'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 3';
@@ -193,25 +200,27 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
     );
   }
 
-  Widget _buildLabeledTextField(String label, TextEditingController controller) {
+  Widget _buildLabeledTextField(
+      String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Color(0xFF33697C),
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
-            fillColor: Color(0xFFBAC6CB),
+            fillColor: const Color(0xFFBAC6CB),
             filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50.0),
               borderSide: BorderSide.none,
@@ -228,4 +237,3 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
     );
   }
 }
-

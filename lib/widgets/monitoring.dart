@@ -3,6 +3,8 @@ import 'package:webagro/widgets/custom_appbar.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 
 class Monitoring extends StatefulWidget {
+  const Monitoring({super.key});
+
   @override
   _MonitoringState createState() => _MonitoringState();
 }
@@ -42,7 +44,9 @@ class _MonitoringState extends State<Monitoring> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Monitoring",
+      ),
       body: ResponsiveLayout(
         largeScreen: _buildContent(),
         smallScreen: _buildContent(),
@@ -50,8 +54,8 @@ class _MonitoringState extends State<Monitoring> {
       floatingActionButton: selectedGreenhouse.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: () => _showTambahDataDialog(context),
-              label: Text('Tambah Data'),
-              icon: Icon(Icons.add),
+              label: const Text('Tambah Data'),
+              icon: const Icon(Icons.add),
             )
           : null,
     );
@@ -64,10 +68,11 @@ class _MonitoringState extends State<Monitoring> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDropdown(),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           if (selectedGreenhouse.isEmpty)
-            Center(
-              child: Text('Silakan pilih Greenhouse untuk melihat data monitoring.'),
+            const Center(
+              child: Text(
+                  'Silakan pilih Greenhouse untuk melihat data monitoring.'),
             )
           else
             _buildDataTable(),
@@ -86,7 +91,7 @@ class _MonitoringState extends State<Monitoring> {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -94,7 +99,7 @@ class _MonitoringState extends State<Monitoring> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: DropdownButton<String>(
           isExpanded: true,
-          underline: SizedBox(),
+          underline: const SizedBox(),
           hint: Text(
             "Pilih Greenhouse",
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
@@ -105,14 +110,14 @@ class _MonitoringState extends State<Monitoring> {
               value: value,
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.eco,
                     color: Colors.green,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     value,
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -123,7 +128,7 @@ class _MonitoringState extends State<Monitoring> {
               selectedGreenhouse = newValue!;
             });
           },
-          icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
         ),
       ),
     );
@@ -135,7 +140,7 @@ class _MonitoringState extends State<Monitoring> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
-        columns: [
+        columns: const [
           DataColumn(label: Text('Perangkat')),
           DataColumn(label: Text('Tanggal')),
           DataColumn(label: Text('Kelembaban')),
@@ -162,12 +167,11 @@ class _MonitoringState extends State<Monitoring> {
                 DataCell(Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () =>
-                          _showEditDataDialog(context, entry.key),
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () => _showEditDataDialog(context, entry.key),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
+                      icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () => _deleteData(entry.key),
                     ),
                   ],
@@ -180,7 +184,7 @@ class _MonitoringState extends State<Monitoring> {
   }
 
   void _showTambahDataDialog(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final Map<String, String> newData = {
       'Perangkat': '',
       'Tanggal': '',
@@ -196,9 +200,9 @@ class _MonitoringState extends State<Monitoring> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Tambah Data Baru'),
+          title: const Text('Tambah Data Baru'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: SingleChildScrollView(
               child: Column(
                 children: newData.keys.map((key) {
@@ -223,16 +227,16 @@ class _MonitoringState extends State<Monitoring> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Batal'),
+              child: const Text('Batal'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text('Simpan'),
+              child: const Text('Simpan'),
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   setState(() {
                     greenhouseData[selectedGreenhouse]!.add(newData);
                   });
@@ -247,7 +251,7 @@ class _MonitoringState extends State<Monitoring> {
   }
 
   void _showEditDataDialog(BuildContext context, int index) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final existingData = greenhouseData[selectedGreenhouse]![index];
     final Map<String, String> editedData = Map.from(existingData);
 
@@ -255,9 +259,9 @@ class _MonitoringState extends State<Monitoring> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Data'),
+          title: const Text('Edit Data'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: SingleChildScrollView(
               child: Column(
                 children: editedData.keys.map((key) {
@@ -283,16 +287,16 @@ class _MonitoringState extends State<Monitoring> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Batal'),
+              child: const Text('Batal'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text('Simpan'),
+              child: const Text('Simpan'),
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   setState(() {
                     greenhouseData[selectedGreenhouse]![index] = editedData;
                   });
@@ -311,17 +315,17 @@ class _MonitoringState extends State<Monitoring> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Hapus Data'),
-          content: Text('Apakah Anda yakin ingin menghapus data ini?'),
+          title: const Text('Hapus Data'),
+          content: const Text('Apakah Anda yakin ingin menghapus data ini?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Batal'),
+              child: const Text('Batal'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text('Hapus'),
+              child: const Text('Hapus'),
               onPressed: () {
                 setState(() {
                   greenhouseData[selectedGreenhouse]!.removeAt(index);

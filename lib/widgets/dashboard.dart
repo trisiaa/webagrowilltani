@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
 class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -12,7 +14,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Dashboard",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -30,7 +34,7 @@ class _DashboardState extends State<Dashboard> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -38,25 +42,28 @@ class _DashboardState extends State<Dashboard> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: DropdownButton<String>(
                     isExpanded: true,
-                    underline: SizedBox(),
+                    underline: const SizedBox(),
                     hint: Text(
                       "Pilih Greenhouse ~",
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
-                    value: selectedGreenhouse.isNotEmpty ? selectedGreenhouse : null,
-                    items: <String>['Greenhouse 1', 'Greenhouse 2'].map((String value) {
+                    value: selectedGreenhouse.isNotEmpty
+                        ? selectedGreenhouse
+                        : null,
+                    items: <String>['Greenhouse 1', 'Greenhouse 2']
+                        .map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.eco,
                               color: Colors.green,
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                               value,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ],
                         ),
@@ -67,7 +74,8 @@ class _DashboardState extends State<Dashboard> {
                         selectedGreenhouse = newValue!;
                       });
                     },
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+                    icon:
+                        const Icon(Icons.arrow_drop_down, color: Colors.green),
                   ),
                 ),
               ),
@@ -100,27 +108,36 @@ class _DashboardState extends State<Dashboard> {
                               childAspectRatio: 1.3,
                               children: [
                                 _buildInfoTile(Icons.thermostat, '0°C', 'SUHU'),
-                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK', 'INT CAHAYA'),
-                                _buildInfoTile(Icons.water_damage, '0%', 'KELEMBABAN'),
-                                _buildInfoTile(Icons.water_outlined, '0L', 'DEBIT AIR'),
+                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK',
+                                    'INT CAHAYA'),
+                                _buildInfoTile(
+                                    Icons.water_damage, '0%', 'KELEMBABAN'),
+                                _buildInfoTile(
+                                    Icons.water_outlined, '0L', 'DEBIT AIR'),
                                 _buildInfoTile(Icons.grain, '0', 'TDS'),
                                 _buildInfoTile(Icons.waves, '0', 'VOLUME'),
                               ],
                             ),
                           ),
-                          SizedBox(width: 16.0), // Jarak antara kolom kiri dan kanan
+                          const SizedBox(
+                              width: 16.0), // Jarak antara kolom kiri dan kanan
                           Expanded(
                             flex: 2,
                             child: Column(
                               children: [
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('NOTIFIKASI', Icons.notifications, Color(0xFFF7F4FD), notificationCount: 1),
+                                  child: _buildGridItem(
+                                      'NOTIFIKASI',
+                                      Icons.notifications,
+                                      const Color(0xFFF7F4FD),
+                                      notificationCount: 1),
                                 ),
-                                SizedBox(height: 16.0),
+                                const SizedBox(height: 16.0),
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('IMAGE GREENHOUSE', Icons.image, Color(0xFFF7F4FD)),
+                                  child: _buildGridItem('IMAGE GREENHOUSE',
+                                      Icons.image, const Color(0xFFF7F4FD)),
                                 ),
                               ],
                             ),
@@ -137,17 +154,24 @@ class _DashboardState extends State<Dashboard> {
                               children: [
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('NOTIFIKASI', Icons.notifications, Color(0xFFF7F4FD), notificationCount: 1),
+                                  child: _buildGridItem(
+                                      'NOTIFIKASI',
+                                      Icons.notifications,
+                                      const Color(0xFFF7F4FD),
+                                      notificationCount: 1),
                                 ),
-                                SizedBox(height: 16.0),
+                                const SizedBox(height: 16.0),
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('IMAGE GREENHOUSE', Icons.image, Color(0xFFF7F4FD)),
+                                  child: _buildGridItem('IMAGE GREENHOUSE',
+                                      Icons.image, const Color(0xFFF7F4FD)),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 16.0), // Jarak antara bagian notifikasi/gambar dan suhu
+                          const SizedBox(
+                              height:
+                                  16.0), // Jarak antara bagian notifikasi/gambar dan suhu
                           Expanded(
                             flex: 4,
                             child: GridView.count(
@@ -157,9 +181,12 @@ class _DashboardState extends State<Dashboard> {
                               childAspectRatio: 1.3,
                               children: [
                                 _buildInfoTile(Icons.thermostat, '0°C', 'SUHU'),
-                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK', 'INT CAHAYA'),
-                                _buildInfoTile(Icons.water_damage, '0%', 'KELEMBABAN'),
-                                _buildInfoTile(Icons.water_outlined, '0L', 'DEBIT AIR'),
+                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK',
+                                    'INT CAHAYA'),
+                                _buildInfoTile(
+                                    Icons.water_damage, '0%', 'KELEMBABAN'),
+                                _buildInfoTile(
+                                    Icons.water_outlined, '0L', 'DEBIT AIR'),
                                 _buildInfoTile(Icons.grain, '0', 'TDS'),
                                 _buildInfoTile(Icons.waves, '0', 'VOLUME'),
                               ],
@@ -179,7 +206,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildInfoTile(IconData icon, String value, String label) {
     return Card(
-      color: Color(0xFFF7F4FD), // Warna latar belakang ungu terang
+      color: const Color(0xFFF7F4FD), // Warna latar belakang ungu terang
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0), // Sudut yang membulat
       ),
@@ -189,10 +216,10 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 40.0, color: Colors.black), // Warna ikon hitam
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 color: Colors.black, // Warna teks hitam untuk nilai
                 fontWeight: FontWeight.bold,
@@ -200,7 +227,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black, // Warna teks hitam untuk label
               ),
@@ -211,7 +238,8 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _buildGridItem(String title, IconData icon, Color color, {int notificationCount = 0}) {
+  Widget _buildGridItem(String title, IconData icon, Color color,
+      {int notificationCount = 0}) {
     return Card(
       color: color,
       shape: RoundedRectangleBorder(
@@ -229,7 +257,7 @@ class _DashboardState extends State<Dashboard> {
                 Expanded(
                   child: Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       color: Colors.black, // Warna teks hitam untuk judul
                       fontWeight: FontWeight.bold,
@@ -238,7 +266,8 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 Stack(
                   children: [
-                    Icon(icon, size: 30.0, color: Colors.black), // Warna ikon hitam
+                    Icon(icon,
+                        size: 30.0, color: Colors.black), // Warna ikon hitam
                     if (notificationCount > 0)
                       Positioned(
                         right: 0,
@@ -248,7 +277,8 @@ class _DashboardState extends State<Dashboard> {
                           backgroundColor: Colors.red,
                           child: Text(
                             '$notificationCount',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
                           ),
                         ),
                       ),
@@ -256,8 +286,8 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Subtitle', // Tambahkan subtitle jika diperlukan
               style: TextStyle(
                 fontSize: 16,

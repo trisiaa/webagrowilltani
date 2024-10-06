@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
 class Tambah_greenhouse extends StatefulWidget {
+  const Tambah_greenhouse({super.key});
+
   @override
   _TambahGreenhouseState createState() => _TambahGreenhouseState();
 }
@@ -47,7 +49,9 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Tambah Greenhouse",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -56,7 +60,7 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
+                const Center(
                   child: Text(
                     'Tambah Greenhouse',
                     style: TextStyle(
@@ -66,22 +70,22 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildLabeledTextField('Nama', _nameController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Pemilik', _ownerController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Alamat', _addressController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Luas', _sizeController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Pengelola', _managerController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Jenis Tanaman', _plantTypeController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Telegram ID', _telegramIdController),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Kondisi (Upload Gambar Ukuran Max 1 MB)',
                   style: TextStyle(
                     fontSize: 16,
@@ -89,31 +93,31 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     Expanded(
                       child: Container(
                         height: 50.0, // Match the height of the button
                         decoration: BoxDecoration(
-                          color: Color(0xFFBAC6CB),
+                          color: const Color(0xFFBAC6CB),
                           borderRadius: BorderRadius.circular(50.0),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: _image == null
-                                ? Text('No image selected')
-                                : Text('Image Selected'),
+                                ? const Text('No image selected')
+                                : const Text('Image Selected'),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Container(
                       height: 50.0,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(50.0),
                           bottomRight: Radius.circular(50.0),
@@ -122,14 +126,15 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                       child: ElevatedButton(
                         onPressed: _pickImage,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF294A52),
+                          backgroundColor: const Color(0xFF294A52),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50.0),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          elevation: 0, // Remove the button's shadow to match the container
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          elevation:
+                              0, // Remove the button's shadow to match the container
                         ),
-                        child: Text(
+                        child: const Text(
                           'Choose File',
                           style: TextStyle(
                             color: Colors.white,
@@ -140,7 +145,7 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -162,22 +167,22 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                           Navigator.pop(context, newGreenhouse);
                         }
                       },
-                      child: Text('Tambah'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF294A52),
+                        backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Tambah'),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Kembali'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Kembali'),
                     ),
                   ],
                 ),
@@ -189,25 +194,27 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
     );
   }
 
-  Widget _buildLabeledTextField(String label, TextEditingController controller) {
+  Widget _buildLabeledTextField(
+      String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Color(0xFF33697C),
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
-            fillColor: Color(0xFFBAC6CB),
+            fillColor: const Color(0xFFBAC6CB),
             filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50.0),
               borderSide: BorderSide.none,
@@ -224,4 +231,3 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
     );
   }
 }
-

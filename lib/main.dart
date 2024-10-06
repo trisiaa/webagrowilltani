@@ -1,50 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/widgets/dashboard.dart';
+import 'package:webagro/widgets/login.dart';
+import 'package:webagro/widgets/register.dart';
 import 'widgets/navbar.dart';
 import 'utils/responsiveLayout.dart';
-import 'widgets/login.dart';
 
-void main() => runApp(MaterialApp(
-      title: 'Flutter Landing Page',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
-    ));
+Future<void> main() async {
+  final apiClient = ApiClient();
+  apiClient.initialize();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('bearer_token');
+
+  runApp(MaterialApp(
+    title: 'Flutter Landing Page',
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+    ),
+    home: HomePage(
+      bearerToken: token,
+    ),
+  ));
+}
 
 class HomePage extends StatelessWidget {
+  final String? bearerToken;
+
+  const HomePage({super.key, required this.bearerToken});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Color(0xFFF8FBFF),
-        Color(0xFFFCFDFD),
-      ])
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[NavBar(), Body()],
+    if (bearerToken != null) {
+      // If token exists, navigate to the Dashboard
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard()),
+        );
+      });
+    } else {
+      return Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Color(0xFFF8FBFF),
+          Color(0xFFFCFDFD),
+        ])),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                NavBar(),
+                Body(apiClient: ApiClient(), bearerToken: bearerToken)
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
+    return Container();
   }
 }
 
 class Body extends StatelessWidget {
+  final ApiClient apiClient;
+  final String? bearerToken;
+
+  const Body({super.key, required this.apiClient, this.bearerToken});
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      largeScreen: LargeChild(),
-      smallScreen: SmallChild(),
+      largeScreen: LargeChild(
+        apiClient: apiClient,
+      ),
+      smallScreen: SmallChild(
+        apiClient: apiClient,
+      ),
     );
   }
 }
 
 class LargeChild extends StatelessWidget {
+  final ApiClient apiClient;
+
+  const LargeChild({super.key, required this.apiClient});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -55,25 +98,25 @@ class LargeChild extends StatelessWidget {
           FractionallySizedBox(
             alignment: Alignment.centerRight,
             widthFactor: .6,
-            child: Image.network("assets/navbar.png", scale: .85),
+            child: Image.asset("assets/navbar.png", scale: .85),
           ),
           FractionallySizedBox(
             alignment: Alignment.centerLeft,
             widthFactor: .6,
             child: Padding(
-              padding: EdgeInsets.only(left: 48),
+              padding: const EdgeInsets.only(left: 48),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Hello!",
+                  const Text("Hello!",
                       style: TextStyle(
                           fontSize: 60,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Montserrat-Regular",
                           color: Color(0xFF8591B0))),
                   RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                         text: "WellCome To ",
                         style:
                             TextStyle(fontSize: 60, color: Color(0xFF8591B0)),
@@ -86,11 +129,11 @@ class LargeChild extends StatelessWidget {
                                   color: Colors.black87))
                         ]),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0, top: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12.0, top: 20),
                     child: Text("We're glad you do cultivation management"),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   Row(
@@ -98,11 +141,11 @@ class LargeChild extends StatelessWidget {
                     children: <Widget>[
                       InkWell(
                         child: Container(
-                          margin: EdgeInsets.only(left: 20),
+                          margin: const EdgeInsets.only(left: 20),
                           width: 120,
                           height: 40,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [Color(0xFF215064), Color(0xFFF6EBE2)],
                               begin: Alignment.bottomRight,
                               end: Alignment.topLeft,
@@ -110,8 +153,8 @@ class LargeChild extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xFF6078ea).withOpacity(.3),
-                                offset: Offset(0, 8),
+                                color: const Color(0xFF6078ea).withOpacity(.3),
+                                offset: const Offset(0, 8),
                                 blurRadius: 8,
                               ),
                             ],
@@ -121,11 +164,13 @@ class LargeChild extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Login(),
+                                  builder: (context) => Register(
+                                    apiService: apiClient.apiService,
+                                  ),
                                 ),
                               );
                             },
-                            child: Material(
+                            child: const Material(
                               color: Colors.transparent,
                               child: Center(
                                 child: Text(
@@ -155,15 +200,18 @@ class LargeChild extends StatelessWidget {
 }
 
 class SmallChild extends StatelessWidget {
+  final ApiClient apiClient;
+
+  const SmallChild({super.key, required this.apiClient});
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
+            const Text(
               "Hello!",
               style: TextStyle(
                   fontSize: 40,
@@ -172,7 +220,7 @@ class SmallChild extends StatelessWidget {
                   fontFamily: "Montserrat-Regular"),
             ),
             RichText(
-              text: TextSpan(
+              text: const TextSpan(
                 text: 'WellCome To ',
                 style: TextStyle(fontSize: 40, color: Color(0xFF8591B0)),
                 children: <TextSpan>[
@@ -185,20 +233,20 @@ class SmallChild extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 0, top: 20),
+            const Padding(
+              padding: EdgeInsets.only(left: 0, top: 20),
               child: Text("We're glad you do cultivation management"),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Center(
-              child: Image.network(
-                "assets/navbar.png",
+              child: Image.asset(
+                "lib/assets/navbar.png",
                 scale: 1,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 32,
             ),
             Row(
@@ -206,11 +254,11 @@ class SmallChild extends StatelessWidget {
               children: <Widget>[
                 InkWell(
                   child: Container(
-                    margin: EdgeInsets.only(left: 20),
+                    margin: const EdgeInsets.only(left: 20),
                     width: 120,
                     height: 40,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [Color(0xFF215064), Color(0xFFF6EBE2)],
                         begin: Alignment.bottomRight,
                         end: Alignment.topLeft,
@@ -218,8 +266,8 @@ class SmallChild extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFF6078ea).withOpacity(.3),
-                          offset: Offset(0, 8),
+                          color: const Color(0xFF6078ea).withOpacity(.3),
+                          offset: const Offset(0, 8),
                           blurRadius: 8,
                         ),
                       ],
@@ -229,11 +277,59 @@ class SmallChild extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Login(),
+                            builder: (context) =>
+                                Register(apiService: apiClient.apiService),
                           ),
                         );
                       },
-                      child: Material(
+                      child: const Material(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: Text(
+                            "Register",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              letterSpacing: 1,
+                              fontFamily: "Montserrat-Bold",
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 20),
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF215064), Color(0xFFF6EBE2)],
+                        begin: Alignment.bottomRight,
+                        end: Alignment.topLeft,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF6078ea).withOpacity(.3),
+                          offset: const Offset(0, 8),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Login(apiService: apiClient.apiService),
+                          ),
+                        );
+                      },
+                      child: const Material(
                         color: Colors.transparent,
                         child: Center(
                           child: Text(

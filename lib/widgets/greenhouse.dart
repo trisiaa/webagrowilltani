@@ -6,6 +6,8 @@ import 'package:webagro/widgets/tambah_greenhouse.dart';
 import 'package:webagro/widgets/tambah_perangkat.dart';
 
 class Greenhouse extends StatefulWidget {
+  const Greenhouse({super.key});
+
   @override
   _GreenhouseState createState() => _GreenhouseState();
 }
@@ -50,7 +52,9 @@ class _GreenhouseState extends State<Greenhouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Greenhouse",
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -60,32 +64,28 @@ class _GreenhouseState extends State<Greenhouse> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSummaryCards(constraints.maxWidth),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTable(
                     'GreenHouse',
                     _buildGreenHouseTable(constraints.maxWidth, context),
                     context,
                     Tambah_greenhouse(), // Ensure the constructor name matches your implementation
                     (newGreenhouse) {
-                      if (newGreenhouse != null) {
-                        setState(() {
-                          greenhouses.add(newGreenhouse);
-                        });
-                      }
+                      setState(() {
+                        greenhouses.add(newGreenhouse);
+                      });
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTable(
                     'Perangkat',
                     _buildPerangkatTable(constraints.maxWidth, context),
                     context,
                     Tambah_perangkat(), // Ensure the constructor name matches your implementation
                     (newDevice) {
-                      if (newDevice != null) {
-                        setState(() {
-                          devices.add(newDevice);
-                        });
-                      }
+                      setState(() {
+                        devices.add(newDevice);
+                      });
                     },
                   ),
                 ],
@@ -117,14 +117,14 @@ class _GreenhouseState extends State<Greenhouse> {
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: Color(0xFFBAC6CB),
+        color: const Color(0xFFBAC6CB),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
         children: [
           Container(
             width: 60,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFF33697C),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(15),
@@ -132,7 +132,7 @@ class _GreenhouseState extends State<Greenhouse> {
               ),
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +140,7 @@ class _GreenhouseState extends State<Greenhouse> {
               children: [
                 Text(
                   number,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF33697C),
@@ -150,7 +150,7 @@ class _GreenhouseState extends State<Greenhouse> {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     label,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.white,
                     ),
@@ -164,51 +164,46 @@ class _GreenhouseState extends State<Greenhouse> {
     );
   }
 
-  Widget _buildTable(
-  String title, 
-  Widget table, 
-  BuildContext context, 
-  Widget destination, 
-  Function(Map<String, String>) onAdd
-) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Tabel $title',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF33697C),
+  Widget _buildTable(String title, Widget table, BuildContext context,
+      Widget destination, Function(Map<String, String>) onAdd) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tabel $title',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF33697C),
+          ),
         ),
-      ),
-      SizedBox(height: 10),
-      _buildTableContainer(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSearchAndAddRow(context, destination, onAdd),
-            SizedBox(height: 10),
-            table,
-          ],
+        const SizedBox(height: 10),
+        _buildTableContainer(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSearchAndAddRow(context, destination, onAdd),
+              const SizedBox(height: 10),
+              table,
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-
-  Widget _buildSearchAndAddRow(BuildContext context, Widget destination, Function(Map<String, String>) onAdd) {
+  Widget _buildSearchAndAddRow(BuildContext context, Widget destination,
+      Function(Map<String, String>) onAdd) {
     return Row(
       children: [
         Expanded(
-          child: Container(
+          child: SizedBox(
             height: 40,
             child: TextField(
               textAlign: TextAlign.left,
               decoration: InputDecoration(
                 hintText: 'Cari',
-                contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
@@ -218,7 +213,7 @@ class _GreenhouseState extends State<Greenhouse> {
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () async {
             final newItem = await Navigator.push(
@@ -231,11 +226,11 @@ class _GreenhouseState extends State<Greenhouse> {
               onAdd(newItem);
             }
           },
-          child: Text('Tambah'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFBAC6CB),
+            backgroundColor: const Color(0xFFBAC6CB),
             foregroundColor: Colors.white,
           ),
+          child: Text('Tambah'),
         ),
       ],
     );
@@ -247,7 +242,7 @@ class _GreenhouseState extends State<Greenhouse> {
       child: ConstrainedBox(
         constraints: BoxConstraints(minWidth: width),
         child: DataTable(
-          headingRowColor: MaterialStateProperty.all(Color(0xFFBAC6CB)),
+          headingRowColor: WidgetStateProperty.all(const Color(0xFFBAC6CB)),
           columns: [
             DataColumn(label: _buildTableHeader('Nama')),
             DataColumn(label: _buildTableHeader('Pemilik')),
@@ -285,7 +280,7 @@ class _GreenhouseState extends State<Greenhouse> {
       String telegramId,
       BuildContext context) {
     return DataRow(
-      color: MaterialStateProperty.all(Colors.white),
+      color: WidgetStateProperty.all(Colors.white),
       cells: [
         DataCell(Text(name)),
         DataCell(Text(owner)),
@@ -328,13 +323,13 @@ class _GreenhouseState extends State<Greenhouse> {
                   });
                 }
               },
-              child: Text('Ubah'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF33697C),
+                foregroundColor: const Color(0xFF33697C),
               ),
+              child: Text('Ubah'),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -342,11 +337,11 @@ class _GreenhouseState extends State<Greenhouse> {
                       .removeWhere((greenhouse) => greenhouse['name'] == name);
                 });
               },
-              child: Text('Hapus'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
+              child: Text('Hapus'),
             ),
           ],
         )),
@@ -360,7 +355,7 @@ class _GreenhouseState extends State<Greenhouse> {
       child: ConstrainedBox(
         constraints: BoxConstraints(minWidth: width),
         child: DataTable(
-          headingRowColor: MaterialStateProperty.all(Color(0xFFBAC6CB)),
+          headingRowColor: WidgetStateProperty.all(const Color(0xFFBAC6CB)),
           columns: [
             DataColumn(label: _buildTableHeader('Nama')),
             DataColumn(label: _buildTableHeader('ID Perangkat')),
@@ -385,7 +380,7 @@ class _GreenhouseState extends State<Greenhouse> {
   DataRow _buildPerangkatRow(String name, String id, String description,
       String greenhouse, BuildContext context) {
     return DataRow(
-      color: MaterialStateProperty.all(Colors.white),
+      color: WidgetStateProperty.all(Colors.white),
       cells: [
         DataCell(Text(name)),
         DataCell(Text(id)),
@@ -418,24 +413,24 @@ class _GreenhouseState extends State<Greenhouse> {
                   });
                 }
               },
-              child: Text('Ubah'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF33697C),
+                foregroundColor: const Color(0xFF33697C),
               ),
+              child: Text('Ubah'),
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   devices.removeWhere((device) => device['id'] == id);
                 });
               },
-              child: Text('Hapus'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
+              child: Text('Hapus'),
             ),
           ],
         )),
@@ -446,7 +441,7 @@ class _GreenhouseState extends State<Greenhouse> {
   Widget _buildTableHeader(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.bold,
         color: Color(0xFF33697C),
       ),
@@ -456,10 +451,10 @@ class _GreenhouseState extends State<Greenhouse> {
   Widget _buildTableContainer(Widget child) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF33697C), // Mengatur warna latar belakang kotak
+        color: const Color(0xFF33697C), // Mengatur warna latar belakang kotak
         borderRadius: BorderRadius.circular(10),
       ),
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: child,
     );
   }

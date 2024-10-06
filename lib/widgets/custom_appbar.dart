@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 import 'package:webagro/widgets/dashboard.dart';
 import 'package:webagro/widgets/grafik.dart';
@@ -8,41 +10,40 @@ import 'package:webagro/widgets/login.dart';
 import 'package:webagro/widgets/monitoring.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final activityName;
+
+  const CustomAppBar({super.key, required this.activityName});
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Color(0xFF215064)),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
+      automaticallyImplyLeading: false,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
+          Text(activityName),
+          const Row(
             children: [
-              Image.asset(
-                'logofix.png', 
-                height: 40,
-              ),
+              // Image.asset(
+              //   'logofix.png',
+              //   height: 20,
+              // ),
             ],
           ),
-
-          
           Row(
             children: [
               if (ResponsiveLayout.isSmallScreen(context))
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.menu, color: Color(0xFF215064)),
+                  icon: const Icon(Icons.menu, color: Color(0xFF215064)),
                   onSelected: (value) {
                     _onMenuSelected(value, context);
                   },
                   itemBuilder: (BuildContext context) {
                     return [
-                      _buildPopupMenuItem('Dashboard',),
+                      _buildPopupMenuItem(
+                        'Dashboard',
+                      ),
                       _buildPopupMenuItem('Green House'),
                       _buildPopupMenuItem('Kontrol'),
                       _buildPopupMenuItem('Monitoring'),
@@ -59,27 +60,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     _buildMenuItem('Monitoring', context),
                     _buildMenuItem('Grafik', context),
                   ],
-                  
                 ),
-                
-
-              
               PopupMenuButton<String>(
-                icon: Icon(Icons.account_circle, color: Color(0xFF215064)),
+                icon:
+                    const Icon(Icons.account_circle, color: Color(0xFF215064)),
                 onSelected: (value) {
                   _onProfileMenuSelected(value, context);
                 },
                 itemBuilder: (BuildContext context) {
                   return [
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'Logout',
-                      child: Text('Logout',
-                      style: TextStyle(color: Color(0xFF215064)),
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(color: Color(0xFF215064)),
                       ),
                     ),
                   ];
                 },
-                
               ),
             ],
           ),
@@ -97,7 +95,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
         child: Text(
           title,
-          style: TextStyle(color: Color(0xFF215064)),
+          style: const TextStyle(color: Color(0xFF215064)),
         ),
       ),
     );
@@ -106,12 +104,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   PopupMenuItem<String> _buildPopupMenuItem(String title) {
     return PopupMenuItem<String>(
       value: title,
-      
-      child: Text(title, style: TextStyle(
-        color: Color(0xFF215064),)),
-      
+      child: Text(title,
+          style: const TextStyle(
+            color: Color(0xFF215064),
+          )),
     );
-    
   }
 
   void _onMenuSelected(String value, BuildContext context) {
@@ -132,7 +129,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'Kontrol':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Kontrol()),
+          MaterialPageRoute(builder: (context) => const Kontrol()),
         );
         break;
       case 'Monitoring':
@@ -152,107 +149,130 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
-void _onProfileMenuSelected(String value, BuildContext context) {
-  if (value == 'Logout') {
-    // Implement logout functionality here
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            width: 120,         
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF215064), Color(0xFFF6EBE2)],
-                begin: Alignment.bottomRight,
-                end: Alignment.topLeft,
-              ),
+  void _onProfileMenuSelected(String value, BuildContext context) {
+    if (value == 'Logout') {
+      // Implement logout functionality here
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'Are you sure you want to logout?',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: TextButton(
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Color(0xFF215064),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
+            child: Container(
+              width: 120,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF215064), Color(0xFFF6EBE2)],
+                  begin: Alignment.bottomRight,
+                  end: Alignment.topLeft,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      'Logout',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: TextButton(
-                          child: Text(
-                            'Logout',
-                            style: TextStyle(
-                              color: Color(0xFF215064),
-                              fontWeight: FontWeight.bold,
-                            ),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Are you sure you want to logout?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          onPressed: () {
-                            // Perform logout action here
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Login(),
+                          child: TextButton(
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Color(0xFF215064),
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: TextButton(
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(
+                                color: Color(0xFF215064),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              // Call the logout endpoint
+                              String? token = prefs.getString('bearer_token');
+
+                              final response = await ApiClient()
+                                  .apiService
+                                  .logout('Bearer $token');
+
+                              if (response.isSuccessful) {
+                                // Perform logout action here
+
+                                await prefs.remove(
+                                    'bearer_token'); // Remove the token from SharedPreferences
+
+                                // Navigate to the Login screen
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Login(
+                                        apiService: ApiClient().apiService),
+                                  ),
+                                );
+                              } else {
+                                // Handle logout error (optional)
+                                // You can show a snackbar or alert dialog here
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Logout failed')),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
-}
-
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

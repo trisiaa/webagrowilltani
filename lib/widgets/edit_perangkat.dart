@@ -7,7 +7,8 @@ class EditPerangkatPage extends StatefulWidget {
   final String description;
   final String greenhouse;
 
-  EditPerangkatPage({
+  const EditPerangkatPage({
+    super.key,
     required this.name,
     required this.id,
     required this.description,
@@ -57,7 +58,9 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Edit Perangkat",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -66,7 +69,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
+                const Center(
                   child: Text(
                     'Edit Perangkat',
                     style: TextStyle(
@@ -76,14 +79,14 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildLabeledTextField('Nama Perangkat', _nameController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('ID Perangkat', _idController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Keterangan', _descriptionController),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Greenhouse',
                   style: TextStyle(
                     fontSize: 16,
@@ -91,12 +94,12 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Container(
                   width: double.infinity,
                   height: 50.0, // Set the height of the container
                   decoration: BoxDecoration(
-                    color: Color(0xFFBAC6CB),
+                    color: const Color(0xFFBAC6CB),
                     borderRadius: BorderRadius.circular(50.0),
                   ),
                   child: Row(
@@ -105,14 +108,14 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                         child: Container(
                           height: 50.0, // Match the height of the button
                           decoration: BoxDecoration(
-                            color: Color(0xFFBAC6CB),
+                            color: const Color(0xFFBAC6CB),
                             borderRadius: BorderRadius.circular(50.0),
                           ),
                         ),
                       ),
                       Container(
                         height: 50.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(50.0),
                             bottomRight: Radius.circular(50.0),
@@ -121,16 +124,20 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                         child: ElevatedButton(
                           onPressed: () => _showGreenhouseDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF294A52),
+                            backgroundColor: const Color(0xFF294A52),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50.0)),
-                            padding: EdgeInsets.symmetric(horizontal: 20.0), // Padding for the button text
-                            elevation: 0, // Remove the button's shadow to match the container
+                            padding: const EdgeInsets.symmetric(
+                                horizontal:
+                                    20.0), // Padding for the button text
+                            elevation:
+                                0, // Remove the button's shadow to match the container
                           ),
                           child: Text(
                             _selectedGreenhouse ?? 'Pilih Greenhouse',
-                            style: TextStyle(
-                              color: Colors.white, // Set the text color to white
+                            style: const TextStyle(
+                              color:
+                                  Colors.white, // Set the text color to white
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -139,28 +146,28 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                     ElevatedButton(
-              onPressed: _saveChanges,
-                      child: Text('Simpan'),
+                    ElevatedButton(
+                      onPressed: _saveChanges,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF294A52),
+                        backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Simpan'),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Kembali'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Kembali'),
                     ),
                   ],
                 ),
@@ -177,12 +184,12 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pilih Greenhouse'),
+          title: const Text('Pilih Greenhouse'),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
                 ListTile(
-                  title: Text('Greenhouse 1'),
+                  title: const Text('Greenhouse 1'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 1';
@@ -191,7 +198,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                   },
                 ),
                 ListTile(
-                  title: Text('Greenhouse 2'),
+                  title: const Text('Greenhouse 2'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 2';
@@ -200,7 +207,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                   },
                 ),
                 ListTile(
-                  title: Text('Greenhouse 3'),
+                  title: const Text('Greenhouse 3'),
                   onTap: () {
                     setState(() {
                       _selectedGreenhouse = 'Greenhouse 3';
@@ -216,25 +223,27 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
     );
   }
 
-  Widget _buildLabeledTextField(String label, TextEditingController controller) {
+  Widget _buildLabeledTextField(
+      String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Color(0xFF33697C),
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
-            fillColor: Color(0xFFBAC6CB),
+            fillColor: const Color(0xFFBAC6CB),
             filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50.0),
               borderSide: BorderSide.none,

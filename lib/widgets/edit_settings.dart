@@ -10,7 +10,8 @@ class EditSettings extends StatefulWidget {
   final String volumeAirMinimal;
   final String volumeAirMaximal;
 
-  EditSettings({
+  const EditSettings({
+    super.key,
     required this.suhuMinimal,
     required this.suhuMaximal,
     required this.tdsMinimal,
@@ -45,10 +46,14 @@ class _EditSettingsState extends State<EditSettings> {
     _suhuMaximalController = TextEditingController(text: widget.suhuMaximal);
     _tdsMinimalController = TextEditingController(text: widget.tdsMinimal);
     _tdsMaximalController = TextEditingController(text: widget.tdsMaximal);
-    _kelembabanMinimalController = TextEditingController(text: widget.kelembabanMinimal);
-    _kelembabanMaximalController = TextEditingController(text: widget.kelembabanMaximal);
-    _volumeAirMinimalController = TextEditingController(text: widget.volumeAirMinimal);
-    _volumeAirMaximalController = TextEditingController(text: widget.volumeAirMaximal);
+    _kelembabanMinimalController =
+        TextEditingController(text: widget.kelembabanMinimal);
+    _kelembabanMaximalController =
+        TextEditingController(text: widget.kelembabanMaximal);
+    _volumeAirMinimalController =
+        TextEditingController(text: widget.volumeAirMinimal);
+    _volumeAirMaximalController =
+        TextEditingController(text: widget.volumeAirMaximal);
   }
 
   @override
@@ -68,7 +73,7 @@ class _EditSettingsState extends State<EditSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Settings'),
+        title: const Text('Edit Settings'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -78,7 +83,7 @@ class _EditSettingsState extends State<EditSettings> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
+                const Center(
                   child: Text(
                     'Edit Settings',
                     style: TextStyle(
@@ -88,23 +93,27 @@ class _EditSettingsState extends State<EditSettings> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildLabeledTextField('Suhu Minimal', _suhuMinimalController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('Suhu Maximal', _suhuMaximalController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('TDS Minimal', _tdsMinimalController),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildLabeledTextField('TDS Maximal', _tdsMaximalController),
-                SizedBox(height: 10),
-                _buildLabeledTextField('Kelembaban Minimal', _kelembabanMinimalController),
-                SizedBox(height: 10),
-                _buildLabeledTextField('Kelembaban Maximal', _kelembabanMaximalController),
-                SizedBox(height: 10),
-                _buildLabeledTextField('Volume Air Minimal', _volumeAirMinimalController),
-                SizedBox(height: 10),
-                _buildLabeledTextField('Volume Air Maximal', _volumeAirMaximalController),
-                SizedBox(height: 20),
+                const SizedBox(height: 10),
+                _buildLabeledTextField(
+                    'Kelembaban Minimal', _kelembabanMinimalController),
+                const SizedBox(height: 10),
+                _buildLabeledTextField(
+                    'Kelembaban Maximal', _kelembabanMaximalController),
+                const SizedBox(height: 10),
+                _buildLabeledTextField(
+                    'Volume Air Minimal', _volumeAirMinimalController),
+                const SizedBox(height: 10),
+                _buildLabeledTextField(
+                    'Volume Air Maximal', _volumeAirMaximalController),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -116,29 +125,33 @@ class _EditSettingsState extends State<EditSettings> {
                             'suhuMaximal': _suhuMaximalController.text,
                             'tdsMinimal': _tdsMinimalController.text,
                             'tdsMaximal': _tdsMaximalController.text,
-                            'kelembabanMinimal': _kelembabanMinimalController.text,
-                            'kelembabanMaximal': _kelembabanMaximalController.text,
-                            'volumeAirMinimal': _volumeAirMinimalController.text,
-                            'volumeAirMaximal': _volumeAirMaximalController.text,
+                            'kelembabanMinimal':
+                                _kelembabanMinimalController.text,
+                            'kelembabanMaximal':
+                                _kelembabanMaximalController.text,
+                            'volumeAirMinimal':
+                                _volumeAirMinimalController.text,
+                            'volumeAirMaximal':
+                                _volumeAirMaximalController.text,
                           });
                         }
                       },
-                      child: Text('Simpan'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF294A52),
+                        backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Simpan'),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Cancel'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
+                      child: Text('Cancel'),
                     ),
                   ],
                 ),
@@ -150,25 +163,27 @@ class _EditSettingsState extends State<EditSettings> {
     );
   }
 
-  Widget _buildLabeledTextField(String label, TextEditingController controller) {
+  Widget _buildLabeledTextField(
+      String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Color(0xFF33697C),
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
-            fillColor: Color(0xFFBAC6CB),
+            fillColor: const Color(0xFFBAC6CB),
             filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50.0),
               borderSide: BorderSide.none,

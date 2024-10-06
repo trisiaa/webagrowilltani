@@ -4,6 +4,8 @@ import 'package:webagro/utils/responsiveLayout.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
 class Grafik extends StatefulWidget {
+  const Grafik({super.key});
+
   @override
   _GrafikState createState() => _GrafikState();
 }
@@ -14,7 +16,9 @@ class _GrafikState extends State<Grafik> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Grafik",
+      ),
       body: ResponsiveLayout(
         largeScreen: _buildContent(2), // 2 kolom untuk layar besar
         smallScreen: _buildContent(1), // 1 kolom untuk layar kecil
@@ -38,7 +42,7 @@ class _GrafikState extends State<Grafik> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -46,7 +50,7 @@ class _GrafikState extends State<Grafik> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: DropdownButton<String>(
                   isExpanded: true,
-                  underline: SizedBox(),
+                  underline: const SizedBox(),
                   hint: Text(
                     "Pilih Greenhouse ~",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
@@ -58,14 +62,14 @@ class _GrafikState extends State<Grafik> {
                       value: value,
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.eco,
                             color: Colors.green,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             value,
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -76,26 +80,28 @@ class _GrafikState extends State<Grafik> {
                       selectedGreenhouse = newValue;
                     });
                   },
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
           ),
           if (selectedGreenhouse != null)
-            Container(
-              height: MediaQuery.of(context).size.height - 150, // Adjust height as needed
+            SizedBox(
+              height: MediaQuery.of(context).size.height -
+                  150, // Adjust height as needed
               child: GridView.count(
                 crossAxisCount: crossAxisCount,
                 children: [
                   _buildGraphCard('Grafik Suhu', LineChart(sampleData1())),
-                  _buildGraphCard('Grafik Kelembaban', LineChart(sampleData2())),
+                  _buildGraphCard(
+                      'Grafik Kelembaban', LineChart(sampleData2())),
                   _buildGraphCard('Grafik Debit Air', LineChart(sampleData3())),
                   _buildGraphCard('Grafik TDS', LineChart(sampleData4())),
                 ],
               ),
             ),
           if (selectedGreenhouse == null)
-            Center(
+            const Center(
               child: Text('Silakan pilih Greenhouse untuk melihat grafik.'),
             ),
         ],
@@ -105,15 +111,15 @@ class _GrafikState extends State<Grafik> {
 
   Widget _buildGraphCard(String title, Widget graph) {
     return Card(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -127,8 +133,8 @@ class _GrafikState extends State<Grafik> {
 
   LineChartData sampleData1() {
     return LineChartData(
-      gridData: FlGridData(show: true),
-      titlesData: FlTitlesData(show: true),
+      gridData: const FlGridData(show: true),
+      titlesData: const FlTitlesData(show: true),
       borderData: FlBorderData(show: true),
       minX: 0,
       maxX: 10,
@@ -137,12 +143,12 @@ class _GrafikState extends State<Grafik> {
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 3),
-            FlSpot(2, 5),
-            FlSpot(4, 4),
-            FlSpot(6, 7),
-            FlSpot(8, 6),
-            FlSpot(10, 8),
+            const FlSpot(0, 3),
+            const FlSpot(2, 5),
+            const FlSpot(4, 4),
+            const FlSpot(6, 7),
+            const FlSpot(8, 6),
+            const FlSpot(10, 8),
           ],
           isCurved: true,
           color: Colors.blue,
@@ -155,8 +161,8 @@ class _GrafikState extends State<Grafik> {
 
   LineChartData sampleData2() {
     return LineChartData(
-      gridData: FlGridData(show: true),
-      titlesData: FlTitlesData(show: true),
+      gridData: const FlGridData(show: true),
+      titlesData: const FlTitlesData(show: true),
       borderData: FlBorderData(show: true),
       minX: 0,
       maxX: 10,
@@ -165,12 +171,12 @@ class _GrafikState extends State<Grafik> {
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 2),
-            FlSpot(2, 3),
-            FlSpot(4, 5),
-            FlSpot(6, 4),
-            FlSpot(8, 7),
-            FlSpot(10, 6),
+            const FlSpot(0, 2),
+            const FlSpot(2, 3),
+            const FlSpot(4, 5),
+            const FlSpot(6, 4),
+            const FlSpot(8, 7),
+            const FlSpot(10, 6),
           ],
           isCurved: true,
           color: Colors.green,
@@ -183,8 +189,8 @@ class _GrafikState extends State<Grafik> {
 
   LineChartData sampleData3() {
     return LineChartData(
-      gridData: FlGridData(show: true),
-      titlesData: FlTitlesData(show: true),
+      gridData: const FlGridData(show: true),
+      titlesData: const FlTitlesData(show: true),
       borderData: FlBorderData(show: true),
       minX: 0,
       maxX: 10,
@@ -193,12 +199,12 @@ class _GrafikState extends State<Grafik> {
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 5),
-            FlSpot(2, 6),
-            FlSpot(4, 3),
-            FlSpot(6, 7),
-            FlSpot(8, 4),
-            FlSpot(10, 8),
+            const FlSpot(0, 5),
+            const FlSpot(2, 6),
+            const FlSpot(4, 3),
+            const FlSpot(6, 7),
+            const FlSpot(8, 4),
+            const FlSpot(10, 8),
           ],
           isCurved: true,
           color: Colors.red,
@@ -211,8 +217,8 @@ class _GrafikState extends State<Grafik> {
 
   LineChartData sampleData4() {
     return LineChartData(
-      gridData: FlGridData(show: true),
-      titlesData: FlTitlesData(show: true),
+      gridData: const FlGridData(show: true),
+      titlesData: const FlTitlesData(show: true),
       borderData: FlBorderData(show: true),
       minX: 0,
       maxX: 10,
@@ -221,12 +227,12 @@ class _GrafikState extends State<Grafik> {
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 4),
-            FlSpot(2, 5),
-            FlSpot(4, 7),
-            FlSpot(6, 6),
-            FlSpot(8, 9),
-            FlSpot(10, 8),
+            const FlSpot(0, 4),
+            const FlSpot(2, 5),
+            const FlSpot(4, 7),
+            const FlSpot(6, 6),
+            const FlSpot(8, 9),
+            const FlSpot(10, 8),
           ],
           isCurved: true,
           color: Colors.purple,

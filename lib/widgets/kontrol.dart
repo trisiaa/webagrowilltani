@@ -4,6 +4,8 @@ import 'package:webagro/utils/responsiveLayout.dart';
 import 'package:webagro/widgets/edit_settings.dart';
 
 class Kontrol extends StatefulWidget {
+  const Kontrol({super.key});
+
   @override
   _KontrolState createState() => _KontrolState();
 }
@@ -27,7 +29,9 @@ class _KontrolState extends State<Kontrol> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(
+        activityName: "Kontrol",
+      ),
       body: ResponsiveLayout(
         largeScreen: _buildContent(4), // 4 kolom untuk layar besar
         smallScreen: _buildContent(2), // 2 kolom untuk layar kecil
@@ -51,7 +55,7 @@ class _KontrolState extends State<Kontrol> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -59,26 +63,27 @@ class _KontrolState extends State<Kontrol> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: DropdownButton<String>(
                   isExpanded: true,
-                  underline: SizedBox(),
+                  underline: const SizedBox(),
                   hint: Text(
                     "Pilih Greenhouse ~",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
-                  value: selectedGreenhouse.isNotEmpty ? selectedGreenhouse : null,
+                  value:
+                      selectedGreenhouse.isNotEmpty ? selectedGreenhouse : null,
                   items: <String>['Greenhouse 1', 'Greenhouse 2']
                       .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.eco,
                             color: Colors.green,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             value,
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -89,13 +94,13 @@ class _KontrolState extends State<Kontrol> {
                       selectedGreenhouse = newValue!;
                     });
                   },
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
           ),
-          if (selectedGreenhouse.isEmpty) 
-            Center(
+          if (selectedGreenhouse.isEmpty)
+            const Center(
               child: Text('Silakan pilih Greenhouse untuk melihat Kontrol.'),
             ),
           if (selectedGreenhouse.isNotEmpty) ...[
@@ -112,7 +117,7 @@ class _KontrolState extends State<Kontrol> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Switch(
                   value: isAutomaticMode,
                   onChanged: (value) {
@@ -124,8 +129,8 @@ class _KontrolState extends State<Kontrol> {
                     });
                   },
                 ),
-                Text('Mode Otomatis'),
-                SizedBox(width: 16),
+                const Text('Mode Otomatis'),
+                const SizedBox(width: 16),
                 Switch(
                   value: isManualMode,
                   onChanged: (value) {
@@ -137,7 +142,7 @@ class _KontrolState extends State<Kontrol> {
                     });
                   },
                 ),
-                Text('Saklar Manual'),
+                const Text('Saklar Manual'),
               ],
             ),
             Padding(
@@ -146,10 +151,11 @@ class _KontrolState extends State<Kontrol> {
                 shrinkWrap: true,
                 crossAxisCount: crossAxisCount,
                 childAspectRatio: 1.0,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _buildInfoTile(Icons.thermostat, '0°C', 'SUHU'),
-                  _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK', 'INT CAHAYA'),
+                  _buildInfoTile(
+                      Icons.wb_sunny_outlined, 'TIDAK', 'INT CAHAYA'),
                   _buildInfoTile(Icons.water_damage, '0%', 'KELEMBABAN'),
                   _buildInfoTile(Icons.water_outlined, '0L', 'DEBIT AIR'),
                 ],
@@ -168,7 +174,7 @@ class _KontrolState extends State<Kontrol> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'SETTING',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
@@ -197,25 +203,29 @@ class _KontrolState extends State<Kontrol> {
                                   suhuMaximal = result['suhuMaximal'];
                                   tdsMinimal = result['tdsMinimal'];
                                   tdsMaximal = result['tdsMaximal'];
-                                  kelembabanMinimal = result['kelembabanMinimal'];
-                                  kelembabanMaximal = result['kelembabanMaximal'];
+                                  kelembabanMinimal =
+                                      result['kelembabanMinimal'];
+                                  kelembabanMaximal =
+                                      result['kelembabanMaximal'];
                                   volumeAirMinimal = result['volumeAirMinimal'];
                                   volumeAirMaximal = result['volumeAirMaximal'];
                                 });
                               }
                             },
-                            icon: Icon(Icons.settings),
+                            icon: const Icon(Icons.settings),
                             tooltip: "Edit",
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       _buildSettingItem('Suhu Minimal', suhuMinimal),
                       _buildSettingItem('Suhu Maximal', suhuMaximal),
                       _buildSettingItem('TDS Minimal', tdsMinimal),
                       _buildSettingItem('TDS Maximal', tdsMaximal),
-                      _buildSettingItem('Kelembaban Minimal', kelembabanMinimal),
-                      _buildSettingItem('Kelembaban Maximal', kelembabanMaximal),
+                      _buildSettingItem(
+                          'Kelembaban Minimal', kelembabanMinimal),
+                      _buildSettingItem(
+                          'Kelembaban Maximal', kelembabanMaximal),
                       _buildSettingItem('Volume Air Minimal', volumeAirMinimal),
                       _buildSettingItem('Volume Air Maximal', volumeAirMaximal),
                     ],
@@ -232,14 +242,14 @@ class _KontrolState extends State<Kontrol> {
   Widget _buildInfoTile(IconData icon, String value, String label) {
     return Card(
       elevation: 2,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 40),
           Text(
             value,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(label),
         ],

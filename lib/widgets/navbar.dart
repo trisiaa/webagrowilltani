@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
+  const NavBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -16,7 +18,7 @@ class NavBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Image.network("assets/logofix.png", scale: .85)),
+                  child: Image.asset("lib/assets/logofix.png", scale: .85)),
             ],
           ),
         ],
