@@ -12,7 +12,7 @@ class ApiClient {
   ApiClient._internal();
 
   late ChopperClient _chopperClient;
-  var uri = Uri.parse("http://192.168.1.6:8000/api");
+  var uri = Uri.parse("https://apiv2.willtani.id/api");
 
   // Initialize the ChopperClient with a base URL
   void initialize() {
@@ -21,7 +21,8 @@ class ApiClient {
       services: [
         ApiService.create(), // Attach your ApiService
       ],
-      converter: const JsonConverter(), // To handle JSON serialization/deserialization
+      converter:
+          const JsonConverter(), // To handle JSON serialization/deserialization
     );
   }
 

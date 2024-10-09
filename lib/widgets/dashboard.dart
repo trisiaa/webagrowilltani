@@ -1,5 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/models/sensor.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
+import 'package:webagro/models/greenhouse.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -9,7 +15,58 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  String selectedGreenhouse = '';
+  String? token;
+  int selectedGreenhouse = 0;
+  Timer? timer;
+
+  final apiService = ApiClient().apiService;
+
+  List<Greenhouse> greenhouses = [];
+  Sensor? latestSensorData;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getToken(); // Wait for token retrieval
+    if (token != null) {
+      await _fetchGreenhouses(); // Only fetch greenhouses if token is set
+    }
+  }
+
+  void _startFetchingSensorData() {
+    // This method will start a timer that calls _fetchLatestSensor every 30 seconds (or any interval you want)
+    timer = Timer.periodic(const Duration(seconds: 30), (Timer t) {
+      _fetchLatestSensor(); // Call your function to fetch the latest sensor data
+    });
+  }
+
+  Future<void> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('bearer_token');
+    setState(() {
+      this.token = token;
+    });
+  }
+
+  Future<void> _fetchGreenhouses() async {
+    final response =
+        await apiService.getAllGreenhouses('Bearer $token'); // Pass the token
+
+    if (response.isSuccessful) {
+      setState(() {
+        greenhouses = (response.body["data"] as List)
+            .map((greenhouse) => Greenhouse.fromJson(greenhouse))
+            .toList();
+      });
+    } else {
+      // Handle error
+      print('Failed to fetch greenhouses: ${response.error}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,20 +97,17 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: DropdownButton<String>(
+                  child: DropdownButton<int>(
                     isExpanded: true,
                     underline: const SizedBox(),
                     hint: Text(
                       "Pilih Greenhouse ~",
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
-                    value: selectedGreenhouse.isNotEmpty
-                        ? selectedGreenhouse
-                        : null,
-                    items: <String>['Greenhouse 1', 'Greenhouse 2']
-                        .map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
+                    value: selectedGreenhouse > 0 ? selectedGreenhouse : null,
+                    items: greenhouses.map((Greenhouse value) {
+                      return DropdownMenuItem<int>(
+                        value: value.id,
                         child: Row(
                           children: [
                             const Icon(
@@ -62,7 +116,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              value,
+                              value.nama,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],
@@ -73,6 +127,8 @@ class _DashboardState extends State<Dashboard> {
                       setState(() {
                         selectedGreenhouse = newValue!;
                       });
+                      _fetchLatestSensor();
+                      _startFetchingSensorData();
                     },
                     icon:
                         const Icon(Icons.arrow_drop_down, color: Colors.green),
@@ -81,7 +137,7 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             // Render berdasarkan pilihan Greenhouse
-            if (selectedGreenhouse.isEmpty)
+            if (selectedGreenhouse == 0)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Center(
@@ -101,23 +157,38 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           Expanded(
                             flex: 4,
-                            child: GridView.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8.0,
-                              crossAxisSpacing: 8.0,
-                              childAspectRatio: 1.3,
-                              children: [
-                                _buildInfoTile(Icons.thermostat, '0°C', 'SUHU'),
-                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK',
-                                    'INT CAHAYA'),
-                                _buildInfoTile(
-                                    Icons.water_damage, '0%', 'KELEMBABAN'),
-                                _buildInfoTile(
-                                    Icons.water_outlined, '0L', 'DEBIT AIR'),
-                                _buildInfoTile(Icons.grain, '0', 'TDS'),
-                                _buildInfoTile(Icons.waves, '0', 'VOLUME'),
-                              ],
-                            ),
+                            child: latestSensorData == null
+                                ? Center(
+                                    child:
+                                        CircularProgressIndicator()) // Show loading indicator if sensor data is still being fetched
+                                : GridView.count(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 8.0,
+                                    crossAxisSpacing: 8.0,
+                                    childAspectRatio: 1.3,
+                                    children: [
+                                      _buildInfoTile(Icons.thermostat,
+                                          latestSensorData!.sensorSuhu, 'SUHU'),
+                                      _buildInfoTile(
+                                          Icons.wb_sunny_outlined,
+                                          latestSensorData!.sensorLdr,
+                                          'INT CAHAYA'),
+                                      _buildInfoTile(
+                                          Icons.water_damage,
+                                          '${latestSensorData!.sensorKelembaban}%',
+                                          'KELEMBABAN'),
+                                      _buildInfoTile(
+                                          Icons.water_outlined,
+                                          '${latestSensorData!.sensorWaterflow}L',
+                                          'DEBIT AIR'),
+                                      _buildInfoTile(Icons.grain,
+                                          latestSensorData!.sensorTds, 'TDS'),
+                                      _buildInfoTile(
+                                          Icons.waves,
+                                          latestSensorData!.sensorVolume,
+                                          'VOLUME'),
+                                    ],
+                                  ),
                           ),
                           const SizedBox(
                               width: 16.0), // Jarak antara kolom kiri dan kanan
@@ -173,24 +244,39 @@ class _DashboardState extends State<Dashboard> {
                               height:
                                   16.0), // Jarak antara bagian notifikasi/gambar dan suhu
                           Expanded(
-                            flex: 4,
-                            child: GridView.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8.0,
-                              crossAxisSpacing: 8.0,
-                              childAspectRatio: 1.3,
-                              children: [
-                                _buildInfoTile(Icons.thermostat, '0°C', 'SUHU'),
-                                _buildInfoTile(Icons.wb_sunny_outlined, 'TIDAK',
-                                    'INT CAHAYA'),
-                                _buildInfoTile(
-                                    Icons.water_damage, '0%', 'KELEMBABAN'),
-                                _buildInfoTile(
-                                    Icons.water_outlined, '0L', 'DEBIT AIR'),
-                                _buildInfoTile(Icons.grain, '0', 'TDS'),
-                                _buildInfoTile(Icons.waves, '0', 'VOLUME'),
-                              ],
-                            ),
+                            flex: 3,
+                            child: latestSensorData == null
+                                ? Center(
+                                    child:
+                                        CircularProgressIndicator()) // Show loading indicator if sensor data is still being fetched
+                                : GridView.count(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 8.0,
+                                    crossAxisSpacing: 8.0,
+                                    childAspectRatio: 1.2,
+                                    children: [
+                                      _buildInfoTile(Icons.thermostat,
+                                          latestSensorData!.sensorSuhu, 'SUHU'),
+                                      _buildInfoTile(
+                                          Icons.wb_sunny_outlined,
+                                          latestSensorData!.sensorLdr,
+                                          'INT CAHAYA'),
+                                      _buildInfoTile(
+                                          Icons.water_damage,
+                                          '${latestSensorData!.sensorKelembaban}%',
+                                          'KELEMBABAN'),
+                                      _buildInfoTile(
+                                          Icons.water_outlined,
+                                          '${latestSensorData!.sensorWaterflow}L',
+                                          'DEBIT AIR'),
+                                      _buildInfoTile(Icons.grain,
+                                          latestSensorData!.sensorTds, 'TDS'),
+                                      _buildInfoTile(
+                                          Icons.waves,
+                                          latestSensorData!.sensorVolume,
+                                          'VOLUME'),
+                                    ],
+                                  ),
                           ),
                         ],
                       );
@@ -298,5 +384,21 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
     );
+  }
+
+  Future<void> _fetchLatestSensor() async {
+    final response = await apiService.getLatestSensorData(
+        'Bearer $token', selectedGreenhouse); // Pass the token
+
+    if (response.isSuccessful) {
+      final sensorData = response.body["data"]["sensor"];
+      if (sensorData != null) {
+        setState(() {
+          latestSensorData = Sensor.fromJson(sensorData);
+        });
+      }
+    } else {
+      print('Failed to fetch sensor data: ${response.error}');
+    }
   }
 }

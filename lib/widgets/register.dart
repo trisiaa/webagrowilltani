@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webagro/chopper_api/api_service.dart';
-import 'package:webagro/main.dart';
 import 'dashboard.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 
