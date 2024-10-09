@@ -46,14 +46,15 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      largeScreen: LargeChild(),
+      largeScreen: LargeChild(apiService: apiService),
       smallScreen: SmallChild(apiService: apiService),
     );
   }
 }
 
 class LargeChild extends StatefulWidget {
-  const LargeChild({super.key});
+  final ApiService apiService;
+  const LargeChild({super.key, required this.apiService});
 
   @override
   _LargeChildState createState() => _LargeChildState();
@@ -108,9 +109,6 @@ class _LargeChildState extends State<LargeChild> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
                     }
-                    if (value != '123') {
-                      return 'Username salah';
-                    }
                     return null;
                   },
                 ),
@@ -131,20 +129,34 @@ class _LargeChildState extends State<LargeChild> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
                     }
-                    if (value != '123') {
-                      return 'Password salah';
-                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Dashboard()),
-                      );
+                      final response = await widget.apiService.login({
+                        'username': usernameController.text,
+                        'password': passwordController.text,
+                      });
+
+                      if (response.isSuccessful) {
+                        String token = response.body['token'];
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setString('bearer_token', token);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Dashboard()),
+                        );
+                      } else {
+                        // Handle errors here (e.g., show a Snackbar)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Login failed')),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -171,6 +183,7 @@ class _LargeChildState extends State<LargeChild> {
     );
   }
 }
+
 
 class SmallChild extends StatefulWidget {
   final ApiService apiService;
