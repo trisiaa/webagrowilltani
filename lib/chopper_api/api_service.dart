@@ -24,5 +24,19 @@ abstract class ApiService extends ChopperService {
     @Header('Authorization') String token, // Add the authorization header
   );
 
+  @Post(path: '/greenhouse')
+  Future<Response> createGreenhouse(
+    @Body() Map<String, dynamic> body,
+  );
+
+  @Get(path: '/iot/greenhouse')
+  Future<Response> getAllGreenhouses(
+    @Header('Authorization') String token,
+  );
+
+  @Get(path: '/iot/sensor/{gh_id}/lastest')
+  Future<Response> getLatestSensorData(
+      @Header('Authorization') String token, @Path('gh_id') int ghId);
+
   static ApiService create([ChopperClient? client]) => _$ApiService(client);
 }

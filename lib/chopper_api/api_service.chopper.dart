@@ -68,4 +68,50 @@ final class _$ApiService extends ApiService {
     );
     return client.send<dynamic, dynamic>($request);
   }
+
+  @override
+  Future<Response<dynamic>> createGreenhouse(Map<String, dynamic> body) {
+    final Uri $url = Uri.parse('/greenhouse');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getAllGreenhouses(String token) {
+    final Uri $url = Uri.parse('/iot/greenhouse');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getLatestSensorData(
+    String token,
+    int ghId,
+  ) {
+    final Uri $url = Uri.parse('/iot/sensor/${ghId}/lastest');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
 }
