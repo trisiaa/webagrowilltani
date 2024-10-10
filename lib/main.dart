@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
       Future.microtask(() {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(builder: (context) => const Dashboard()),
         );
       });
     } else {
@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
           body: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                NavBar(),
+                const NavBar(),
                 Body(apiClient: ApiClient(), bearerToken: bearerToken)
               ],
             ),

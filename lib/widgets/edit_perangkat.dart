@@ -156,7 +156,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                         backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Simpan'),
+                      child: const Text('Simpan'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
@@ -167,7 +167,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Kembali'),
+                      child: const Text('Kembali'),
                     ),
                   ],
                 ),
@@ -262,7 +262,7 @@ class _EditPerangkatPageState extends State<EditPerangkatPage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: EditPerangkatPage(
       name: 'Perangkat 1',
       id: 'ID123',

@@ -38,5 +38,29 @@ abstract class ApiService extends ChopperService {
   Future<Response> getLatestSensorData(
       @Header('Authorization') String token, @Path('gh_id') int ghId);
 
+  @Put(path: '/iot/pompa/{id}')
+  Future<Response> updatePompa(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @Get(path: '/iot/pompa/{id}')
+  Future<Response> getLatestPompaData(
+      @Header('Authorization') String token, @Path('id') int id);
+
+  @Get(path: '/iot/kontrol/{id}')
+  Future<Response> getKontrolData(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+  );
+
+  @Put(path: '/iot/kontrol/{id}')
+  Future<Response> updateKontrolData(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
   static ApiService create([ChopperClient? client]) => _$ApiService(client);
 }

@@ -20,7 +20,7 @@ class Login extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePage(
+                  builder: (context) => const HomePage(
                         bearerToken: null,
                       )), // Replace with your widget
             );
@@ -46,7 +46,9 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
+
       largeScreen: LargeChild(apiService: apiService),
+
       smallScreen: SmallChild(apiService: apiService),
     );
   }
@@ -136,6 +138,7 @@ class _LargeChildState extends State<LargeChild> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
+
                       final response = await widget.apiService.login({
                         'username': usernameController.text,
                         'password': passwordController.text,
@@ -157,6 +160,7 @@ class _LargeChildState extends State<LargeChild> {
                           const SnackBar(content: Text('Login failed')),
                         );
                       }
+
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -282,7 +286,8 @@ class _SmallChildState extends State<SmallChild> {
 
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
+                          MaterialPageRoute(
+                              builder: (context) => const Dashboard()),
                         );
                       } else {
                         // Handle errors here (e.g., show a Snackbar)

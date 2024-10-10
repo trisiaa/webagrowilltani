@@ -69,7 +69,7 @@ class _GreenhouseState extends State<Greenhouse> {
                     'GreenHouse',
                     _buildGreenHouseTable(constraints.maxWidth, context),
                     context,
-                    Tambah_greenhouse(), // Ensure the constructor name matches your implementation
+                    const Tambah_greenhouse(), // Ensure the constructor name matches your implementation
                     (newGreenhouse) {
                       setState(() {
                         greenhouses.add(newGreenhouse);
@@ -81,7 +81,7 @@ class _GreenhouseState extends State<Greenhouse> {
                     'Perangkat',
                     _buildPerangkatTable(constraints.maxWidth, context),
                     context,
-                    Tambah_perangkat(), // Ensure the constructor name matches your implementation
+                    const Tambah_perangkat(), // Ensure the constructor name matches your implementation
                     (newDevice) {
                       setState(() {
                         devices.add(newDevice);
@@ -230,7 +230,7 @@ class _GreenhouseState extends State<Greenhouse> {
             backgroundColor: const Color(0xFFBAC6CB),
             foregroundColor: Colors.white,
           ),
-          child: Text('Tambah'),
+          child: const Text('Tambah'),
         ),
       ],
     );
@@ -327,7 +327,7 @@ class _GreenhouseState extends State<Greenhouse> {
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF33697C),
               ),
-              child: Text('Ubah'),
+              child: const Text('Ubah'),
             ),
             const SizedBox(width: 4),
             ElevatedButton(
@@ -341,7 +341,7 @@ class _GreenhouseState extends State<Greenhouse> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Hapus'),
+              child: const Text('Hapus'),
             ),
           ],
         )),
@@ -417,7 +417,7 @@ class _GreenhouseState extends State<Greenhouse> {
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF33697C),
               ),
-              child: Text('Ubah'),
+              child: const Text('Ubah'),
             ),
             const SizedBox(width: 4),
             ElevatedButton(
@@ -430,7 +430,7 @@ class _GreenhouseState extends State<Greenhouse> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Hapus'),
+              child: const Text('Hapus'),
             ),
           ],
         )),

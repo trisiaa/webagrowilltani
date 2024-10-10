@@ -44,6 +44,22 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  Future<void> _fetchLatestSensor() async {
+    final response = await apiService.getLatestSensorData(
+        'Bearer $token', selectedGreenhouse); // Pass the token
+
+    if (response.isSuccessful) {
+      final sensorData = response.body["data"]["sensor"];
+      if (sensorData != null) {
+        setState(() {
+          latestSensorData = Sensor.fromJson(sensorData);
+        });
+      }
+    } else {
+      print('Failed to fetch sensor data: ${response.error}');
+    }
+  }
+
   Future<void> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('bearer_token');
@@ -158,7 +174,7 @@ class _DashboardState extends State<Dashboard> {
                           Expanded(
                             flex: 4,
                             child: latestSensorData == null
-                                ? Center(
+                                ? const Center(
                                     child:
                                         CircularProgressIndicator()) // Show loading indicator if sensor data is still being fetched
                                 : GridView.count(
@@ -246,7 +262,7 @@ class _DashboardState extends State<Dashboard> {
                           Expanded(
                             flex: 3,
                             child: latestSensorData == null
-                                ? Center(
+                                ? const Center(
                                     child:
                                         CircularProgressIndicator()) // Show loading indicator if sensor data is still being fetched
                                 : GridView.count(
@@ -384,21 +400,5 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
     );
-  }
-
-  Future<void> _fetchLatestSensor() async {
-    final response = await apiService.getLatestSensorData(
-        'Bearer $token', selectedGreenhouse); // Pass the token
-
-    if (response.isSuccessful) {
-      final sensorData = response.body["data"]["sensor"];
-      if (sensorData != null) {
-        setState(() {
-          latestSensorData = Sensor.fromJson(sensorData);
-        });
-      }
-    } else {
-      print('Failed to fetch sensor data: ${response.error}');
-    }
   }
 }

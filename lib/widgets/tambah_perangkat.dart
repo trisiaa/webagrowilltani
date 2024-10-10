@@ -133,7 +133,7 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                         backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Tambah'),
+                      child: const Text('Tambah'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
@@ -144,7 +144,7 @@ class _TambahPerangkatState extends State<Tambah_perangkat> {
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Kembali'),
+                      child: const Text('Kembali'),
                     ),
                   ],
                 ),

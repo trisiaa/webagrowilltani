@@ -228,7 +228,8 @@ class _LargeChildState extends State<LargeChild> {
                         // Navigate to the dashboard on successful registration
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
+                          MaterialPageRoute(
+                              builder: (context) => const Dashboard()),
                         );
                       } else {
                         // Handle errors here (e.g., show a Snackbar)
@@ -453,7 +454,8 @@ class _SmallChildState extends State<SmallChild> {
                         // Navigate to the dashboard on successful registration
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
+                          MaterialPageRoute(
+                              builder: (context) => const Dashboard()),
                         );
                       } else {
                         // Handle errors here (e.g., show a Snackbar)

@@ -114,4 +114,82 @@ final class _$ApiService extends ApiService {
     );
     return client.send<dynamic, dynamic>($request);
   }
+
+  @override
+  Future<Response<dynamic>> updatePompa(
+    String token,
+    int id,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('/iot/pompa/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getLatestPompaData(
+    String token,
+    int id,
+  ) {
+    final Uri $url = Uri.parse('/iot/pompa/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getKontrolData(
+    String token,
+    int id,
+  ) {
+    final Uri $url = Uri.parse('/iot/kontrol/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> updateKontrolData(
+    String token,
+    int id,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('/iot/kontrol/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
 }

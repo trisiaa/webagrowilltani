@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/models/kontrol.dart';
 
 class EditSettings extends StatefulWidget {
-  final String suhuMinimal;
-  final String suhuMaximal;
-  final String tdsMinimal;
-  final String tdsMaximal;
-  final String kelembabanMinimal;
-  final String kelembabanMaximal;
-  final String volumeAirMinimal;
-  final String volumeAirMaximal;
+  final KontrolM kontrolM;
+  final String token; // Pass the authorization token
 
   const EditSettings({
     super.key,
-    required this.suhuMinimal,
-    required this.suhuMaximal,
-    required this.tdsMinimal,
-    required this.tdsMaximal,
-    required this.kelembabanMinimal,
-    required this.kelembabanMaximal,
-    required this.volumeAirMinimal,
-    required this.volumeAirMaximal,
+    required this.kontrolM,
+    required this.token,
   });
 
   @override
@@ -29,7 +19,6 @@ class EditSettings extends StatefulWidget {
 class _EditSettingsState extends State<EditSettings> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for the text fields
   late TextEditingController _suhuMinimalController;
   late TextEditingController _suhuMaximalController;
   late TextEditingController _tdsMinimalController;
@@ -42,18 +31,23 @@ class _EditSettingsState extends State<EditSettings> {
   @override
   void initState() {
     super.initState();
-    _suhuMinimalController = TextEditingController(text: widget.suhuMinimal);
-    _suhuMaximalController = TextEditingController(text: widget.suhuMaximal);
-    _tdsMinimalController = TextEditingController(text: widget.tdsMinimal);
-    _tdsMaximalController = TextEditingController(text: widget.tdsMaximal);
+    // Initialize the controllers with values from KontrolM
+    _suhuMinimalController =
+        TextEditingController(text: widget.kontrolM.suhuMin.toString());
+    _suhuMaximalController =
+        TextEditingController(text: widget.kontrolM.suhuMax.toString());
+    _tdsMinimalController =
+        TextEditingController(text: widget.kontrolM.tdsMin.toString());
+    _tdsMaximalController =
+        TextEditingController(text: widget.kontrolM.tdsMax.toString());
     _kelembabanMinimalController =
-        TextEditingController(text: widget.kelembabanMinimal);
+        TextEditingController(text: widget.kontrolM.kelembabanMin.toString());
     _kelembabanMaximalController =
-        TextEditingController(text: widget.kelembabanMaximal);
+        TextEditingController(text: widget.kontrolM.kelembabanMax.toString());
     _volumeAirMinimalController =
-        TextEditingController(text: widget.volumeAirMinimal);
+        TextEditingController(text: widget.kontrolM.volumeMin.toString());
     _volumeAirMaximalController =
-        TextEditingController(text: widget.volumeAirMaximal);
+        TextEditingController(text: widget.kontrolM.volumeMax.toString());
   }
 
   @override
@@ -67,6 +61,48 @@ class _EditSettingsState extends State<EditSettings> {
     _volumeAirMinimalController.dispose();
     _volumeAirMaximalController.dispose();
     super.dispose();
+  }
+
+  // Handle form submission and API call
+  Future<void> _updateSettings() async {
+    if (_formKey.currentState!.validate()) {
+      final updatedData = {
+        'suhu_min': double.parse(_suhuMinimalController.text),
+        'suhu_max': double.parse(_suhuMaximalController.text),
+        'tds_min': int.parse(_tdsMinimalController.text),
+        'tds_max': int.parse(_tdsMaximalController.text),
+        'kelembaban_min': int.parse(_kelembabanMinimalController.text),
+        'kelembaban_max': int.parse(_kelembabanMaximalController.text),
+        'volume_min': int.parse(_volumeAirMinimalController.text),
+        'volume_max': int.parse(_volumeAirMaximalController.text),
+        'perangkat_id': widget.kontrolM.perangkatId,
+      };
+
+      try {
+        // Make the PUT request using the ApiClient
+        final response = await ApiClient().apiService.updateKontrolData(
+              'Bearer ${widget.token}', // Pass the token for authorization
+              widget.kontrolM.perangkatId, // Pass the ID of the control
+              updatedData, // Pass the updated data
+            );
+
+        if (response.isSuccessful) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("sukses rubah setting!")));
+          Navigator.pop(context, updatedData);
+        } else {
+          // Handle error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Update failed: ${response.error}')),
+          );
+        }
+      } catch (e) {
+        // Handle any errors during the API call
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -118,29 +154,13 @@ class _EditSettingsState extends State<EditSettings> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.pop(context, {
-                            'suhuMinimal': _suhuMinimalController.text,
-                            'suhuMaximal': _suhuMaximalController.text,
-                            'tdsMinimal': _tdsMinimalController.text,
-                            'tdsMaximal': _tdsMaximalController.text,
-                            'kelembabanMinimal':
-                                _kelembabanMinimalController.text,
-                            'kelembabanMaximal':
-                                _kelembabanMaximalController.text,
-                            'volumeAirMinimal':
-                                _volumeAirMinimalController.text,
-                            'volumeAirMaximal':
-                                _volumeAirMaximalController.text,
-                          });
-                        }
-                      },
+                      onPressed:
+                          _updateSettings, // Call the function to update settings
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Simpan'),
+                      child: const Text('Simpan'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
@@ -151,7 +171,7 @@ class _EditSettingsState extends State<EditSettings> {
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
                   ],
                 ),
@@ -163,6 +183,7 @@ class _EditSettingsState extends State<EditSettings> {
     );
   }
 
+  // Text field builder
   Widget _buildLabeledTextField(
       String label, TextEditingController controller) {
     return Column(
@@ -199,19 +220,4 @@ class _EditSettingsState extends State<EditSettings> {
       ],
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: EditSettings(
-      suhuMinimal: '20',
-      suhuMaximal: '30',
-      tdsMinimal: '500',
-      tdsMaximal: '1000',
-      kelembabanMinimal: '60',
-      kelembabanMaximal: '80',
-      volumeAirMinimal: '100',
-      volumeAirMaximal: '200',
-    ),
-  ));
 }

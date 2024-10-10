@@ -25,4 +25,14 @@ class Perangkat {
       updatedAt: DateTime.parse(json['updated_at']),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nama': nama,
+      'keterangan': keterangan,
+      'greenhouse_id': greenhouseId.toString(),
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 }
