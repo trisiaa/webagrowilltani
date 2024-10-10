@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webagro/chopper_api/api_service.dart';
+import 'package:webagro/main.dart';
 import 'dashboard.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 
@@ -45,8 +46,10 @@ class _LargeChildState extends State<LargeChild> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController roleIdController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -76,6 +79,26 @@ class _LargeChildState extends State<LargeChild> {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+                const SizedBox(height: 20),
+                // Name field
+                TextFormField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    hintText: 'Name',
+                    filled: true,
+                    fillColor: Colors.grey[300],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 // Username field
@@ -116,6 +139,26 @@ class _LargeChildState extends State<LargeChild> {
                     }
                     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                       return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                // Role ID field
+                TextFormField(
+                  controller: roleIdController,
+                  decoration: InputDecoration(
+                    hintText: 'Role ID',
+                    filled: true,
+                    fillColor: Colors.grey[300],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a role id';
                     }
                     return null;
                   },
@@ -170,11 +213,18 @@ class _LargeChildState extends State<LargeChild> {
                       final response = await widget.apiService.register({
                         'username': usernameController.text,
                         'email': emailController.text,
+                        'nama': nameController.text,
+                        'role_id': roleIdController.text,
                         'password': passwordController.text,
                         'password_confirmation': confirmPasswordController.text,
                       });
 
                       if (response.isSuccessful) {
+                        String token = response.body['access_token'];
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setString('bearer_token', token);
+
                         // Navigate to the dashboard on successful registration
                         Navigator.push(
                           context,
@@ -184,9 +234,7 @@ class _LargeChildState extends State<LargeChild> {
                       } else {
                         // Handle errors here (e.g., show a Snackbar)
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  'Registration failed: ${response.body}')),
+                          const SnackBar(content: Text('Registration failed')),
                         );
                       }
                     }
@@ -215,6 +263,7 @@ class _LargeChildState extends State<LargeChild> {
     );
   }
 }
+
 
 class SmallChild extends StatefulWidget {
   final ApiService apiService;
