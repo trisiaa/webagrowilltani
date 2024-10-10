@@ -117,13 +117,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'Dashboard':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(builder: (context) => const Dashboard()),
         );
         break;
       case 'Green House':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Greenhouse()),
+          MaterialPageRoute(builder: (context) => const Greenhouse()),
         );
         break;
       case 'Kontrol':
@@ -135,13 +135,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'Monitoring':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Monitoring()),
+          MaterialPageRoute(builder: (context) => const Monitoring()),
         );
         break;
       case 'Grafik':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Grafik()),
+          MaterialPageRoute(builder: (context) => const Grafik()),
         );
         break;
       default:

@@ -20,7 +20,7 @@ class Login extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePage(
+                  builder: (context) => const HomePage(
                         bearerToken: null,
                       )), // Replace with your widget
             );
@@ -46,7 +46,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveLayout(
-      largeScreen: LargeChild(),
+      largeScreen: const LargeChild(),
       smallScreen: SmallChild(apiService: apiService),
     );
   }
@@ -143,7 +143,8 @@ class _LargeChildState extends State<LargeChild> {
                     if (_formKey.currentState?.validate() ?? false) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Dashboard()),
+                        MaterialPageRoute(
+                            builder: (context) => const Dashboard()),
                       );
                     }
                   },
@@ -269,7 +270,8 @@ class _SmallChildState extends State<SmallChild> {
 
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
+                          MaterialPageRoute(
+                              builder: (context) => const Dashboard()),
                         );
                       } else {
                         // Handle errors here (e.g., show a Snackbar)

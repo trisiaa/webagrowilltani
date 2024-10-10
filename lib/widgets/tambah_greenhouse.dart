@@ -171,7 +171,7 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                         backgroundColor: const Color(0xFF294A52),
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Tambah'),
+                      child: const Text('Tambah'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
@@ -182,7 +182,7 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Kembali'),
+                      child: const Text('Kembali'),
                     ),
                   ],
                 ),

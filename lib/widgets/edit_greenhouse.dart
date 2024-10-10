@@ -272,7 +272,7 @@ class _EditGreenhousePageState extends State<EditGreenhousePage> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: EditGreenhousePage(
       name: 'Greenhouse A',
       owner: 'Owner A',
