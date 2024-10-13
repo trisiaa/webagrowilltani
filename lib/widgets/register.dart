@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webagro/chopper_api/api_service.dart';
-import 'package:webagro/main.dart';
 import 'dashboard.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 
@@ -46,7 +45,8 @@ class _LargeChildState extends State<LargeChild> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController roleIdController = TextEditingController();
 
@@ -263,7 +263,6 @@ class _LargeChildState extends State<LargeChild> {
     );
   }
 }
-
 
 class SmallChild extends StatefulWidget {
   final ApiService apiService;

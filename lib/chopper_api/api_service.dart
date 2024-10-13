@@ -4,9 +4,6 @@ part 'api_service.chopper.dart'; // Part file for generated code
 
 @ChopperApi()
 abstract class ApiService extends ChopperService {
-  @Get(path: '/data')
-  Future<Response> fetchData();
-
   // Login endpoint
   @Post(path: '/login')
   Future<Response> login(
@@ -48,6 +45,9 @@ abstract class ApiService extends ChopperService {
   @Get(path: '/iot/pompa/{id}')
   Future<Response> getLatestPompaData(
       @Header('Authorization') String token, @Path('id') int id);
+
+  @Get(path: '/iot/jenis-tanaman')
+  Future<Response> getTanaman(@Header('Authorization') String token);
 
   @Get(path: '/iot/kontrol/{id}')
   Future<Response> getKontrolData(

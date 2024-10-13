@@ -18,17 +18,6 @@ final class _$ApiService extends ApiService {
   final Type definitionType = ApiService;
 
   @override
-  Future<Response<dynamic>> fetchData() {
-    final Uri $url = Uri.parse('/data');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<dynamic, dynamic>($request);
-  }
-
-  @override
   Future<Response<dynamic>> login(Map<String, dynamic> body) {
     final Uri $url = Uri.parse('/login');
     final $body = body;
@@ -142,6 +131,21 @@ final class _$ApiService extends ApiService {
     int id,
   ) {
     final Uri $url = Uri.parse('/iot/pompa/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getTanaman(String token) {
+    final Uri $url = Uri.parse('/iot/jenis-tanaman');
     final Map<String, String> $headers = {
       'Authorization': token,
     };
