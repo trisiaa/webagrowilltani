@@ -105,6 +105,24 @@ final class _$ApiService extends ApiService {
   }
 
   @override
+  Future<Response<dynamic>> getGraphSensorData(
+    String token,
+    int ghId,
+  ) {
+    final Uri $url = Uri.parse('/iot/sensor/${ghId}/chart');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> updatePompa(
     String token,
     int id,

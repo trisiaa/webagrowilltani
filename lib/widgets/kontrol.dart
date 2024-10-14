@@ -238,17 +238,13 @@ class _KontrolState extends State<Kontrol> {
             // Konten lainnya hanya ditampilkan jika greenhouse sudah dipilih
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.network(
-                'https://via.placeholder.com/300x150',
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child: latestSensorData == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildImageTile(greenhouses[selectedGreenhouse - 1].gambar),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 16),
                 Switch(
                   value: isAutomaticMode,
                   onChanged: (value) {
@@ -391,6 +387,31 @@ class _KontrolState extends State<Kontrol> {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageTile(String gambar) {
+    String baseUrl = "https://apiv2.willtani.id/public/uploads/greenhouse/";
+    return Card(
+      color: const Color(0xFFF7F4FD), // Warna latar belakang ungu terang
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0), // Sudut yang membulat
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(16.0), // Sudut yang membulat
+              child: AspectRatio(
+                aspectRatio: 3 / 1, // Adjust the aspect ratio as needed
+                child: Image.network(
+                  "$baseUrl$gambar",
+                  fit: BoxFit.cover,
+                  width: double.infinity, // Match the parent's width
+                ),
+              )),
         ],
       ),
     );

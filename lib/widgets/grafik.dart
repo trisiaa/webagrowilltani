@@ -1,5 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/models/grafik.dart';
+import 'package:webagro/models/greenhouse.dart';
 import 'package:webagro/utils/responsiveLayout.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
@@ -11,7 +17,73 @@ class Grafik extends StatefulWidget {
 }
 
 class _GrafikState extends State<Grafik> {
-  String? selectedGreenhouse;
+  String? token;
+  int selectedGreenhouse = 0;
+  Timer? timer;
+
+  final apiService = ApiClient().apiService;
+
+  List<Greenhouse> greenhouses = [];
+  List<dynamic>? latestGraphData;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getToken();
+    if (token != null) {
+      await _fetchGreenhouses();
+    }
+  }
+
+  void _startFetchingSensorData() {
+    timer = Timer.periodic(const Duration(seconds: 30), (Timer t) {
+      _fetchLatestSensor();
+    });
+  }
+
+  Future<void> _fetchLatestSensor() async {
+    final response = await apiService.getGraphSensorData(
+        'Bearer $token', selectedGreenhouse); // Pass the token
+    if (response.isSuccessful) {
+      final graphData = response.body["data"];
+      if (graphData != null) {
+        setState(() {
+          latestGraphData =
+              graphData.map((graph) => GrafikM.fromJson(graph)).toList();
+        });
+      }
+    } else {
+      print('Failed to fetch sensor data: ${response.error}');
+    }
+  }
+
+  Future<void> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('bearer_token');
+    setState(() {
+      this.token = token;
+    });
+  }
+
+  Future<void> _fetchGreenhouses() async {
+    final response =
+        await apiService.getAllGreenhouses('Bearer $token'); // Pass the token
+
+    if (response.isSuccessful) {
+      setState(() {
+        greenhouses = (response.body["data"] as List)
+            .map((greenhouse) => Greenhouse.fromJson(greenhouse))
+            .toList();
+      });
+    } else {
+      // Handle error
+      print('Failed to fetch greenhouses: ${response.error}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +92,7 @@ class _GrafikState extends State<Grafik> {
         activityName: "Grafik",
       ),
       body: ResponsiveLayout(
-        largeScreen: _buildContent(2), // 2 kolom untuk layar besar
+        largeScreen: _buildContent(4), // 2 kolom untuk layar besar
         smallScreen: _buildContent(1), // 1 kolom untuk layar kecil
       ),
     );
@@ -48,18 +120,17 @@ class _GrafikState extends State<Grafik> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DropdownButton<String>(
+                child: DropdownButton<int>(
                   isExpanded: true,
                   underline: const SizedBox(),
                   hint: Text(
                     "Pilih Greenhouse ~",
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
-                  value: selectedGreenhouse,
-                  items: <String>['Greenhouse 1', 'Greenhouse 2']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
+                  value: selectedGreenhouse > 0 ? selectedGreenhouse : null,
+                  items: greenhouses.map((Greenhouse greenhouse) {
+                    return DropdownMenuItem<int>(
+                      value: greenhouse.id,
                       child: Row(
                         children: [
                           const Icon(
@@ -68,7 +139,7 @@ class _GrafikState extends State<Grafik> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            value,
+                            greenhouse.nama,
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],
@@ -77,30 +148,32 @@ class _GrafikState extends State<Grafik> {
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      selectedGreenhouse = newValue;
+                      selectedGreenhouse = newValue!;
                     });
+                    _fetchLatestSensor();
+                    _startFetchingSensorData();
                   },
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
           ),
-          if (selectedGreenhouse != null)
+          if (selectedGreenhouse != 0)
             SizedBox(
-              height: MediaQuery.of(context).size.height -
-                  150, // Adjust height as needed
+              height: MediaQuery.of(context).size.height,
+              width:
+                  MediaQuery.of(context).size.width, // Adjust width as needed
               child: GridView.count(
                 crossAxisCount: crossAxisCount,
                 children: [
-                  _buildGraphCard('Grafik Suhu', LineChart(sampleData1())),
-                  _buildGraphCard(
-                      'Grafik Kelembaban', LineChart(sampleData2())),
-                  _buildGraphCard('Grafik Debit Air', LineChart(sampleData3())),
-                  _buildGraphCard('Grafik TDS', LineChart(sampleData4())),
+                  _buildGraphCard('Grafik Suhu', latestGraphData?[0]),
+                  _buildGraphCard('Grafik Kelembaban', latestGraphData?[1]),
+                  _buildGraphCard('Grafik Debit Air', latestGraphData?[2]),
+                  _buildGraphCard('Grafik TDS', latestGraphData?[3]),
                 ],
               ),
             ),
-          if (selectedGreenhouse == null)
+          if (selectedGreenhouse == 0)
             const Center(
               child: Text('Silakan pilih Greenhouse untuk melihat grafik.'),
             ),
@@ -109,21 +182,24 @@ class _GrafikState extends State<Grafik> {
     );
   }
 
-  Widget _buildGraphCard(String title, Widget graph) {
+  Widget _buildGraphCard(String title, GrafikM? latestGraphData) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-          const SizedBox(height: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: graph,
+              padding: const EdgeInsets.only(left: 18, top: 12),
+              // Pass the latestGraphData to the chart function
+              child: LineChart(chart(latestGraphData)),
             ),
           ),
         ],
@@ -131,111 +207,61 @@ class _GrafikState extends State<Grafik> {
     );
   }
 
-  LineChartData sampleData1() {
+  LineChartData chart(GrafikM? latestGraphData) {
+    if (latestGraphData == null || latestGraphData.data.isEmpty) {
+      return LineChartData(
+        lineBarsData: [],
+        titlesData: FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+      );
+    }
+
     return LineChartData(
       gridData: const FlGridData(show: true),
-      titlesData: const FlTitlesData(show: true),
+      titlesData: FlTitlesData(
+        leftTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              int index = value.toInt();
+              // Ensure index is within bounds of the labels array
+              if (index >= 0 && index < latestGraphData.labels.length) {
+                return RotatedBox(
+                  quarterTurns: 3, // Rotates the text vertically
+                  child: Text(
+                    latestGraphData.labels[index],
+                    style: const TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+              return const SizedBox
+                  .shrink(); // Return empty if index out of range
+            },
+            interval: 1, // Show labels at every point
+            reservedSize: 80, // Adjust this for spacing of labels
+          ),
+        ),
+      ),
       borderData: FlBorderData(show: true),
       minX: 0,
-      maxX: 10,
+      maxX: latestGraphData.data.length - 1,
       minY: 0,
-      maxY: 10,
+      maxY: latestGraphData.data.reduce((a, b) => a > b ? a : b) + 5,
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            const FlSpot(0, 3),
-            const FlSpot(2, 5),
-            const FlSpot(4, 4),
-            const FlSpot(6, 7),
-            const FlSpot(8, 6),
-            const FlSpot(10, 8),
-          ],
+          spots: List.generate(
+            latestGraphData.data.length,
+            (index) => FlSpot(index.toDouble(), latestGraphData.data[index]),
+          ),
           isCurved: true,
           color: Colors.blue,
-          barWidth: 2,
-          belowBarData: BarAreaData(show: false),
-        ),
-      ],
-    );
-  }
-
-  LineChartData sampleData2() {
-    return LineChartData(
-      gridData: const FlGridData(show: true),
-      titlesData: const FlTitlesData(show: true),
-      borderData: FlBorderData(show: true),
-      minX: 0,
-      maxX: 10,
-      minY: 0,
-      maxY: 10,
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            const FlSpot(0, 2),
-            const FlSpot(2, 3),
-            const FlSpot(4, 5),
-            const FlSpot(6, 4),
-            const FlSpot(8, 7),
-            const FlSpot(10, 6),
-          ],
-          isCurved: true,
-          color: Colors.green,
-          barWidth: 2,
-          belowBarData: BarAreaData(show: false),
-        ),
-      ],
-    );
-  }
-
-  LineChartData sampleData3() {
-    return LineChartData(
-      gridData: const FlGridData(show: true),
-      titlesData: const FlTitlesData(show: true),
-      borderData: FlBorderData(show: true),
-      minX: 0,
-      maxX: 10,
-      minY: 0,
-      maxY: 10,
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            const FlSpot(0, 5),
-            const FlSpot(2, 6),
-            const FlSpot(4, 3),
-            const FlSpot(6, 7),
-            const FlSpot(8, 4),
-            const FlSpot(10, 8),
-          ],
-          isCurved: true,
-          color: Colors.red,
-          barWidth: 2,
-          belowBarData: BarAreaData(show: false),
-        ),
-      ],
-    );
-  }
-
-  LineChartData sampleData4() {
-    return LineChartData(
-      gridData: const FlGridData(show: true),
-      titlesData: const FlTitlesData(show: true),
-      borderData: FlBorderData(show: true),
-      minX: 0,
-      maxX: 10,
-      minY: 0,
-      maxY: 10,
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            const FlSpot(0, 4),
-            const FlSpot(2, 5),
-            const FlSpot(4, 7),
-            const FlSpot(6, 6),
-            const FlSpot(8, 9),
-            const FlSpot(10, 8),
-          ],
-          isCurved: true,
-          color: Colors.purple,
           barWidth: 2,
           belowBarData: BarAreaData(show: false),
         ),

@@ -35,6 +35,10 @@ abstract class ApiService extends ChopperService {
   Future<Response> getLatestSensorData(
       @Header('Authorization') String token, @Path('gh_id') int ghId);
 
+  @Get(path: '/iot/sensor/{gh_id}/chart')
+  Future<Response> getGraphSensorData(
+      @Header('Authorization') String token, @Path('gh_id') int ghId);
+
   @Put(path: '/iot/pompa/{id}')
   Future<Response> updatePompa(
     @Header('Authorization') String token,

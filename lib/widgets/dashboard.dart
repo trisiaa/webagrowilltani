@@ -31,16 +31,15 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _initialize() async {
-    await _getToken(); // Wait for token retrieval
+    await _getToken();
     if (token != null) {
-      await _fetchGreenhouses(); // Only fetch greenhouses if token is set
+      await _fetchGreenhouses();
     }
   }
 
   void _startFetchingSensorData() {
-    // This method will start a timer that calls _fetchLatestSensor every 30 seconds (or any interval you want)
     timer = Timer.periodic(const Duration(seconds: 30), (Timer t) {
-      _fetchLatestSensor(); // Call your function to fetch the latest sensor data
+      _fetchLatestSensor();
     });
   }
 
@@ -178,7 +177,7 @@ class _DashboardState extends State<Dashboard> {
                                     child:
                                         CircularProgressIndicator()) // Show loading indicator if sensor data is still being fetched
                                 : GridView.count(
-                                    crossAxisCount: 2,
+                                    crossAxisCount: 3,
                                     mainAxisSpacing: 8.0,
                                     crossAxisSpacing: 8.0,
                                     childAspectRatio: 1.3,
@@ -223,8 +222,12 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(height: 16.0),
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('IMAGE GREENHOUSE',
-                                      Icons.image, const Color(0xFFF7F4FD)),
+                                  child: latestSensorData == null
+                                      ? const Center(
+                                          child: CircularProgressIndicator())
+                                      : _buildImageTile(
+                                          greenhouses[selectedGreenhouse]
+                                              .gambar),
                                 ),
                               ],
                             ),
@@ -250,8 +253,12 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(height: 16.0),
                                 Expanded(
                                   flex: 1,
-                                  child: _buildGridItem('IMAGE GREENHOUSE',
-                                      Icons.image, const Color(0xFFF7F4FD)),
+                                  child: latestSensorData == null
+                                      ? const Center(
+                                          child: CircularProgressIndicator())
+                                      : _buildImageTile(
+                                          greenhouses[selectedGreenhouse - 1]
+                                              .gambar),
                                 ),
                               ],
                             ),
@@ -398,6 +405,32 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageTile(String gambar) {
+    String baseUrl = "https://apiv2.willtani.id/public/uploads/greenhouse/";
+    return Card(
+      color: const Color(0xFFF7F4FD), // Warna latar belakang ungu terang
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0), // Sudut yang membulat
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.0), // Sudut yang membulat
+              child: Image.network(
+                "$baseUrl$gambar",
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
