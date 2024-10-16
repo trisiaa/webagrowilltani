@@ -21,14 +21,53 @@ abstract class ApiService extends ChopperService {
     @Header('Authorization') String token, // Add the authorization header
   );
 
-  @Post(path: '/greenhouse')
+ 
+  @Post(path: 'iot/greenhouse')
   Future<Response> createGreenhouse(
+    @Header('Authorization') String token,
     @Body() Map<String, dynamic> body,
   );
 
   @Get(path: '/iot/greenhouse')
   Future<Response> getAllGreenhouses(
     @Header('Authorization') String token,
+  );
+
+  @Post(path: '/iot/greenhouse/{id}')
+  Future<Response> updateGreenhouse(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @Delete(path: '/iot/greenhouse/{id}')
+  Future<Response> deleteGreenhouse(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+  );
+
+  @Get(path: '/iot/perangkat')
+  Future<Response> getAllPerangkat(
+    @Header('Authorization') String token,
+  );
+
+  @Post(path: '/iot/perangkat')
+  Future<Response> createPerangkat(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @Put(path: '/iot/perangkat/{id}')
+  Future<Response> updatePerangkat(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @Delete(path: '/iot/perangkat/{id}')
+  Future<Response> deletePerangkat(
+    @Header('Authorization') String token,
+    @Path('id') int id,
   );
 
   @Get(path: '/iot/sensor/{gh_id}/lastest')

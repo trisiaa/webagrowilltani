@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:webagro/models/greenhouse.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
 class Tambah_perangkat extends StatefulWidget {
-  const Tambah_perangkat({super.key});
+  const Tambah_perangkat({super.key, required List<Greenhouse> greenhouses});
 
   @override
   _TambahPerangkatState createState() => _TambahPerangkatState();

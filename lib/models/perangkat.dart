@@ -31,6 +31,7 @@ class Perangkat {
       'nama': nama,
       'keterangan': keterangan,
       'greenhouse_id': greenhouseId.toString(),
+      'greenhouse_id': int.parse(greenhouseId),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

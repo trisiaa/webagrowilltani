@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/models/greenhouse.dart' as model;
+import 'package:webagro/models/perangkat.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 import 'package:webagro/widgets/edit_greenhouse.dart';
 import 'package:webagro/widgets/edit_perangkat.dart';
@@ -13,41 +17,79 @@ class Greenhouse extends StatefulWidget {
 }
 
 class _GreenhouseState extends State<Greenhouse> {
-  List<Map<String, String>> greenhouses = [
-    {
-      'name': 'Green House 1',
-      'owner': 'Owner 1',
-      'manager': 'Manager 1',
-      'address': 'Address 1',
-      'size': 'Size 1',
-      'plantType': 'Plant Type 1',
-      'telegramId': 'Telegram ID 1'
-    },
-    {
-      'name': 'Green House 2',
-      'owner': 'Owner 2',
-      'manager': 'Manager 2',
-      'address': 'Address 2',
-      'size': 'Size 2',
-      'plantType': 'Plant Type 2',
-      'telegramId': 'Telegram ID 2'
-    },
-  ];
+  List<Map<String, String>> greenhouses = [];
 
-  List<Map<String, String>> devices = [
-    {
-      'name': 'Perangkat 1',
-      'id': '73529614656',
-      'description': 'Deskripsi Perangkat 1',
-      'greenhouse': 'Green House 1',
-    },
-    {
-      'name': 'Perangkat 2',
-      'id': '38924681000',
-      'description': 'Deskripsi Perangkat 2',
-      'greenhouse': 'Green House 2',
-    },
-  ];
+  List<model.Greenhouse> greenhouseModel = [];
+  List<Perangkat> perangkatModel = [];
+
+  String? token;
+
+  final apiService = ApiClient().apiService;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _getToken(); // Wait for token retrieval
+    if (token != null) {
+      await _fetchGreenhouses(); // Only fetch greenhouses if token is set
+      await _fetchAllPerangkat(); // Only fetch perangkat if token is set
+    }
+  }
+
+  Future<void> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('bearer_token');
+    setState(() {
+      this.token = token;
+    });
+  }
+
+  Future<void> _fetchGreenhouses() async {
+    final response =
+        await apiService.getAllGreenhouses('Bearer $token'); // Pass the token
+
+    if (response.isSuccessful) {
+      setState(() {
+        greenhouseModel = (response.body["data"] as List)
+            .map((greenhouse) => model.Greenhouse.fromJson(greenhouse))
+            .toList();
+        greenhouses = greenhouseModel
+            .map((greenhouse) => {
+                  'name': greenhouse.nama,
+                  'owner': greenhouse.pemilik,
+                  'manager': greenhouse.pengelola,
+                  'address': greenhouse.alamat,
+                  'size': greenhouse.ukuran,
+                  'plantType': greenhouse.jenisTanaman.nama,
+                  'telegramId': greenhouse.telegramId ?? "-",
+                })
+            .toList();
+      });
+    } else {
+      // Handle error
+      print('Failed to fetch greenhouses: ${response.error}');
+    }
+  }
+
+  Future<void> _fetchAllPerangkat() async {
+    final response =
+        await apiService.getAllPerangkat('Bearer $token'); // Pass the token
+
+    if (response.isSuccessful) {
+      setState(() {
+        perangkatModel = (response.body["data"] as List)
+            .map((perangkat) => Perangkat.fromJson(perangkat))
+            .toList();
+      });
+    } else {
+      // Handle error
+      print('Failed to fetch perangkat: ${response.error}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +112,28 @@ class _GreenhouseState extends State<Greenhouse> {
                     _buildGreenHouseTable(constraints.maxWidth, context),
                     context,
                     const Tambah_greenhouse(), // Ensure the constructor name matches your implementation
-                    (newGreenhouse) {
+                    (newGreenhouse) async {
                       setState(() {
                         greenhouses.add(newGreenhouse);
                       });
+                      final data = model.Greenhouse(
+                        id: greenhouses.length,
+                        nama: newGreenhouse['name'] ?? "",
+                        pemilik: newGreenhouse['owner'] ?? "",
+                        pengelola: newGreenhouse['manager'] ?? "",
+                        alamat: newGreenhouse['address'] ?? "",
+                        ukuran: newGreenhouse['size'] ?? "",
+                        jenisTanamanId: "1",
+                        jenisTanaman: model.JenisTanaman(id: 0, nama: ""),
+                        telegramId: newGreenhouse['telegramId'] ?? "",
+                        gambar: newGreenhouse['imagePath'] ?? "",
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      );
+                      await apiService.createGreenhouse(
+                        'Bearer $token',
+                        data.toJson(),
+                      );
                     },
                   ),
                   const SizedBox(height: 20),
@@ -81,10 +141,22 @@ class _GreenhouseState extends State<Greenhouse> {
                     'Perangkat',
                     _buildPerangkatTable(constraints.maxWidth, context),
                     context,
-                    const Tambah_perangkat(), // Ensure the constructor name matches your implementation
-                    (newDevice) {
+                    Tambah_perangkat(
+                        greenhouses:
+                            greenhouseModel), // Ensure the constructor name matches your implementation
+                    (newDevice) async {
+                      final data = Perangkat(
+                        id: perangkatModel.length,
+                        nama: newDevice['name'] ?? "",
+                        keterangan: newDevice['description'] ?? "",
+                        greenhouseId: newDevice['greenhouse_id'] ?? "",
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      );
+                      await apiService.createPerangkat(
+                          'Bearer $token', data.toJson());
                       setState(() {
-                        devices.add(newDevice);
+                        perangkatModel.add(data);
                       });
                     },
                   ),
@@ -220,9 +292,9 @@ class _GreenhouseState extends State<Greenhouse> {
               context,
               MaterialPageRoute(builder: (context) => destination),
             );
+            print(newItem);
 
             if (newItem != null) {
-              print(newItem);
               onAdd(newItem);
             }
           },
@@ -253,15 +325,16 @@ class _GreenhouseState extends State<Greenhouse> {
             DataColumn(label: _buildTableHeader('Telegram ID')),
             DataColumn(label: _buildTableHeader('Aksi')),
           ],
-          rows: greenhouses.map((greenhouse) {
+          rows: greenhouseModel.map((greenhouse) {
             return _buildGreenHouseRow(
-              greenhouse['name']!,
-              greenhouse['owner']!,
-              greenhouse['manager']!,
-              greenhouse['address']!,
-              greenhouse['size']!,
-              greenhouse['plantType']!,
-              greenhouse['telegramId']!,
+              greenhouse.id,
+              greenhouse.nama,
+              greenhouse.pemilik,
+              greenhouse.pengelola,
+              greenhouse.alamat,
+              greenhouse.ukuran,
+              greenhouse.jenisTanaman.nama,
+              greenhouse.telegramId ?? "",
               context,
             );
           }).toList(),
@@ -271,6 +344,7 @@ class _GreenhouseState extends State<Greenhouse> {
   }
 
   DataRow _buildGreenHouseRow(
+      int id,
       String name,
       String owner,
       String manager,
@@ -308,6 +382,25 @@ class _GreenhouseState extends State<Greenhouse> {
                   ),
                 );
                 if (updatedGreenhouse != null) {
+                  final data = model.Greenhouse(
+                    id: id,
+                    nama: updatedGreenhouse['name'] ?? "",
+                    pemilik: updatedGreenhouse['owner'] ?? "",
+                    pengelola: updatedGreenhouse['manager'] ?? "",
+                    alamat: updatedGreenhouse['address'] ?? "",
+                    ukuran: updatedGreenhouse['size'] ?? "",
+                    jenisTanamanId: "1",
+                    jenisTanaman: model.JenisTanaman(id: 0, nama: ""),
+                    telegramId: updatedGreenhouse['telegramId'] ?? "",
+                    gambar: updatedGreenhouse['imagePath'] ?? "",
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  );
+                  await apiService.updateGreenhouse(
+                    'Bearer $token',
+                    id,
+                    data.toJson(),
+                  );
                   setState(() {
                     final index =
                         greenhouses.indexWhere((g) => g['name'] == name);
@@ -331,7 +424,8 @@ class _GreenhouseState extends State<Greenhouse> {
             ),
             const SizedBox(width: 4),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await apiService.deleteGreenhouse("bearer $token", id);
                 setState(() {
                   greenhouses
                       .removeWhere((greenhouse) => greenhouse['name'] == name);
@@ -363,12 +457,16 @@ class _GreenhouseState extends State<Greenhouse> {
             DataColumn(label: _buildTableHeader('GreenHouse')),
             DataColumn(label: _buildTableHeader('Aksi')),
           ],
-          rows: devices.map((device) {
+          rows: perangkatModel.map((device) {
             return _buildPerangkatRow(
-              device['name']!,
-              device['id']!,
-              device['description']!,
-              device['greenhouse']!,
+              device.nama,
+              device.id.toString(),
+              device.keterangan,
+              greenhouseModel
+                  .firstWhere(
+                      (model) => model.id.toString() == device.greenhouseId)
+                  .nama,
+              perangkatModel.firstWhere((model) => model.id == device.id),
               context,
             );
           }).toList(),
@@ -378,7 +476,7 @@ class _GreenhouseState extends State<Greenhouse> {
   }
 
   DataRow _buildPerangkatRow(String name, String id, String description,
-      String greenhouse, BuildContext context) {
+      String greenhouse, Perangkat perangkat, BuildContext context) {
     return DataRow(
       color: WidgetStateProperty.all(Colors.white),
       cells: [
@@ -402,14 +500,33 @@ class _GreenhouseState extends State<Greenhouse> {
                   ),
                 );
                 if (updatedDevice != null) {
+                  final data = Perangkat(
+                    id: int.parse(id),
+                    nama: updatedDevice['name'] ?? "",
+                    keterangan: updatedDevice['description'] ?? "",
+                    greenhouseId: updatedDevice['greenhouse'] ?? "",
+                    createdAt: perangkat.createdAt,
+                    updatedAt: DateTime.now(),
+                  );
+                  await apiService.updatePerangkat(
+                    'Bearer $token',
+                    int.parse(id),
+                    data.toJson(),
+                  );
                   setState(() {
-                    final index = devices.indexWhere((d) => d['id'] == id);
-                    devices[index] = {
-                      'name': updatedDevice['name'],
-                      'id': updatedDevice['id'],
-                      'description': updatedDevice['description'],
-                      'greenhouse': updatedDevice['greenhouse'],
-                    };
+                    final index =
+                        perangkatModel.indexWhere((d) => d.id.toString() == id);
+                    perangkatModel[index] = Perangkat(
+                        id: updatedDevice['id'],
+                        nama: updatedDevice['name'],
+                        keterangan: updatedDevice['description'],
+                        greenhouseId: greenhouseModel
+                            .firstWhere((model) =>
+                                model.nama == updatedDevice['greenhouse'])
+                            .id
+                            .toString(),
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now());
                   });
                 }
               },
@@ -421,9 +538,11 @@ class _GreenhouseState extends State<Greenhouse> {
             ),
             const SizedBox(width: 4),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await apiService.deletePerangkat("bearer $token", perangkat.id);
                 setState(() {
-                  devices.removeWhere((device) => device['id'] == id);
+                  perangkatModel
+                      .removeWhere((device) => device.id.toString() == id);
                 });
               },
               style: ElevatedButton.styleFrom(

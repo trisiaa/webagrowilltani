@@ -58,15 +58,22 @@ final class _$ApiService extends ApiService {
     return client.send<dynamic, dynamic>($request);
   }
 
-  @override
-  Future<Response<dynamic>> createGreenhouse(Map<String, dynamic> body) {
-    final Uri $url = Uri.parse('/greenhouse');
+    @override
+  Future<Response<dynamic>> createGreenhouse(
+    String token,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('iot/greenhouse');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
     final $body = body;
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
       body: $body,
+      headers: $headers,
     );
     return client.send<dynamic, dynamic>($request);
   }
@@ -79,6 +86,119 @@ final class _$ApiService extends ApiService {
     };
     final Request $request = Request(
       'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+@override
+  Future<Response<dynamic>> updateGreenhouse(
+    String token,
+    int id,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('/iot/greenhouse/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+    @override
+  Future<Response<dynamic>> deleteGreenhouse(
+    String token,
+    int id,
+  ) {
+    final Uri $url = Uri.parse('/iot/greenhouse/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+   @override
+  Future<Response<dynamic>> getAllPerangkat(String token) {
+    final Uri $url = Uri.parse('/iot/perangkat');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> createPerangkat(
+    String token,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('/iot/perangkat');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> updatePerangkat(
+    String token,
+    int id,
+    Map<String, dynamic> body,
+  ) {
+    final Uri $url = Uri.parse('/iot/perangkat/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> deletePerangkat(
+    String token,
+    int id,
+  ) {
+    final Uri $url = Uri.parse('/iot/perangkat/${id}');
+    final Map<String, String> $headers = {
+      'Authorization': token,
+    };
+    final Request $request = Request(
+      'DELETE',
       $url,
       client.baseUrl,
       headers: $headers,

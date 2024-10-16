@@ -65,6 +65,7 @@ class Greenhouse {
       'alamat': alamat,
       'ukuran': ukuran,
       'gambar': gambar,
+      'image': gambar,
       'pengelola': pengelola,
       'latitude': latitude?.toString(),
       'longitude': longitude?.toString(),
