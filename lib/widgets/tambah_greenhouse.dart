@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
 
-class Tambah_greenhouse extends StatefulWidget {
-  const Tambah_greenhouse({super.key});
+class TambahGreenhouse extends StatefulWidget {
+  const TambahGreenhouse({super.key});
 
   @override
   _TambahGreenhouseState createState() => _TambahGreenhouseState();
 }
 
-class _TambahGreenhouseState extends State<Tambah_greenhouse> {
+class _TambahGreenhouseState extends State<TambahGreenhouse> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers for the text fields
@@ -86,7 +86,7 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                 _buildLabeledTextField('Telegram ID', _telegramIdController),
                 const SizedBox(height: 10),
                 const Text(
-                  'Kondisi (Upload Gambar Ukuran Max 1 MB)',
+                  'Foto (Upload Gambar Ukuran Max 1 MB)',
                   style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFF33697C),
@@ -153,16 +153,15 @@ class _TambahGreenhouseState extends State<Tambah_greenhouse> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           final newGreenhouse = {
-                            'name': _nameController.text,
-                            'owner': _ownerController.text,
-                            'address': _addressController.text,
-                            'size': _sizeController.text,
-                            'manager': _managerController.text,
-                            'plantType': _plantTypeController.text,
+                            'nama': _nameController.text,
+                            'pemilik': _ownerController.text,
+                            'alamat': _addressController.text,
+                            'ukuran': _sizeController.text,
+                            'pengelola': _managerController.text,
+                            'jenis_tanaman_id': _plantTypeController.text,
                             'telegramId': _telegramIdController.text,
-                            'imagePath': _image?.path,
+                            'image': _image,
                           };
-
                           print('New Greenhouse Data: $newGreenhouse');
                           Navigator.pop(context, newGreenhouse);
                         }

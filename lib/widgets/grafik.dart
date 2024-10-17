@@ -23,7 +23,7 @@ class _GrafikState extends State<Grafik> {
 
   final apiService = ApiClient().apiService;
 
-  List<Greenhouse> greenhouses = [];
+  List<GreenhouseM> greenhouses = [];
   List<dynamic>? latestGraphData;
 
   @override
@@ -76,7 +76,7 @@ class _GrafikState extends State<Grafik> {
     if (response.isSuccessful) {
       setState(() {
         greenhouses = (response.body["data"] as List)
-            .map((greenhouse) => Greenhouse.fromJson(greenhouse))
+            .map((greenhouse) => GreenhouseM.fromJson(greenhouse))
             .toList();
       });
     } else {
@@ -128,7 +128,7 @@ class _GrafikState extends State<Grafik> {
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   value: selectedGreenhouse > 0 ? selectedGreenhouse : null,
-                  items: greenhouses.map((Greenhouse greenhouse) {
+                  items: greenhouses.map((GreenhouseM greenhouse) {
                     return DropdownMenuItem<int>(
                       value: greenhouse.id,
                       child: Row(

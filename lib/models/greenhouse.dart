@@ -1,4 +1,4 @@
-class Greenhouse {
+class GreenhouseM {
   final int id;
   final String nama;
   final String pemilik;
@@ -15,7 +15,7 @@ class Greenhouse {
   final DateTime? deletedAt;
   final JenisTanaman jenisTanaman;
 
-  Greenhouse({
+  GreenhouseM({
     required this.id,
     required this.nama,
     required this.pemilik,
@@ -33,8 +33,8 @@ class Greenhouse {
     required this.jenisTanaman,
   });
 
-  factory Greenhouse.fromJson(Map<String, dynamic> json) {
-    return Greenhouse(
+  factory GreenhouseM.fromJson(Map<String, dynamic> json) {
+    return GreenhouseM(
       id: json['id'],
       nama: json['nama'],
       pemilik: json['pemilik'],

@@ -58,7 +58,7 @@ final class _$ApiService extends ApiService {
     return client.send<dynamic, dynamic>($request);
   }
 
-    @override
+  @override
   Future<Response<dynamic>> createGreenhouse(
     String token,
     Map<String, dynamic> body,
@@ -93,7 +93,7 @@ final class _$ApiService extends ApiService {
     return client.send<dynamic, dynamic>($request);
   }
 
-@override
+  @override
   Future<Response<dynamic>> updateGreenhouse(
     String token,
     int id,
@@ -114,7 +114,7 @@ final class _$ApiService extends ApiService {
     return client.send<dynamic, dynamic>($request);
   }
 
-    @override
+  @override
   Future<Response<dynamic>> deleteGreenhouse(
     String token,
     int id,
@@ -132,7 +132,7 @@ final class _$ApiService extends ApiService {
     return client.send<dynamic, dynamic>($request);
   }
 
-   @override
+  @override
   Future<Response<dynamic>> getAllPerangkat(String token) {
     final Uri $url = Uri.parse('/iot/perangkat');
     final Map<String, String> $headers = {

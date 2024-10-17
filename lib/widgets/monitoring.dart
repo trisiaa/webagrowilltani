@@ -23,7 +23,7 @@ class _MonitoringState extends State<Monitoring> {
 
   final apiService = ApiClient().apiService;
 
-  List<Greenhouse> greenhouses = [];
+  List<GreenhouseM> greenhouses = [];
   List<dynamic>? latestSensorData;
 
   @override
@@ -77,7 +77,7 @@ class _MonitoringState extends State<Monitoring> {
     if (response.isSuccessful) {
       setState(() {
         greenhouses = (response.body["data"] as List)
-            .map((greenhouse) => Greenhouse.fromJson(greenhouse))
+            .map((greenhouse) => GreenhouseM.fromJson(greenhouse))
             .toList();
       });
     } else {
@@ -232,7 +232,7 @@ class _MonitoringState extends State<Monitoring> {
             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           value: selectedGreenhouse != 0 ? selectedGreenhouse : null,
-          items: greenhouses.map((Greenhouse value) {
+          items: greenhouses.map((GreenhouseM value) {
             return DropdownMenuItem<int>(
               value: value.id,
               child: Row(

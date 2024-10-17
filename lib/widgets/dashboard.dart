@@ -21,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
 
   final apiService = ApiClient().apiService;
 
-  List<Greenhouse> greenhouses = [];
+  List<GreenhouseM> greenhouses = [];
   Sensor? latestSensorData;
 
   @override
@@ -74,7 +74,7 @@ class _DashboardState extends State<Dashboard> {
     if (response.isSuccessful) {
       setState(() {
         greenhouses = (response.body["data"] as List)
-            .map((greenhouse) => Greenhouse.fromJson(greenhouse))
+            .map((greenhouse) => GreenhouseM.fromJson(greenhouse))
             .toList();
       });
     } else {
@@ -120,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                     value: selectedGreenhouse > 0 ? selectedGreenhouse : null,
-                    items: greenhouses.map((Greenhouse value) {
+                    items: greenhouses.map((GreenhouseM value) {
                       return DropdownMenuItem<int>(
                         value: value.id,
                         child: Row(
