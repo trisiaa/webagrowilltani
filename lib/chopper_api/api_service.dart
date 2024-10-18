@@ -23,9 +23,17 @@ abstract class ApiService extends ChopperService {
   );
 
   @Post(path: 'iot/greenhouse')
+  @multipart
   Future<Response> createGreenhouse(
     @Header('Authorization') String token,
-    @Body() Map<String, dynamic> body,
+    @Part('nama') String nama,
+    @Part('alamat') String alamat,
+    @Part('ukuran') String ukuran,
+    @Part('pemilik') String pemilik,
+    @Part('pengelola') String pengelola,
+    @Part('jenis_tanaman_id') String jenisTanamanId,
+    @Part('gambar') String gambar, // Add this part for image
+    @Part('image') http.MultipartFile image, // Add this part for image
   );
 
   @Get(path: '/iot/greenhouse')
@@ -34,10 +42,18 @@ abstract class ApiService extends ChopperService {
   );
 
   @Post(path: '/iot/greenhouse/{id}')
+  @multipart
   Future<Response> updateGreenhouse(
     @Header('Authorization') String token,
-    @Path('id') int id,
-    @Body() Map<String, dynamic> body,
+    @Part('nama') String nama,
+    @Part('alamat') String alamat,
+    @Part('ukuran') String ukuran,
+    @Part('pemilik') String pemilik,
+    @Part('pengelola') String pengelola,
+    @Part('jenis_tanaman_id') String jenisTanamanId,
+    @Part('gambar') String gambar, // Add this part for image
+    @Part('image') http.MultipartFile image,
+    @Path('id') int id, // Add this part for image
   );
 
   @Delete(path: '/iot/greenhouse/{id}')

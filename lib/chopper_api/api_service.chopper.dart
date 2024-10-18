@@ -61,18 +61,59 @@ final class _$ApiService extends ApiService {
   @override
   Future<Response<dynamic>> createGreenhouse(
     String token,
-    Map<String, dynamic> body,
+    String nama,
+    String alamat,
+    String ukuran,
+    String pemilik,
+    String pengelola,
+    String jenisTanamanId,
+    String gambar,
+    http.MultipartFile image,
   ) {
     final Uri $url = Uri.parse('iot/greenhouse');
     final Map<String, String> $headers = {
       'Authorization': token,
     };
-    final $body = body;
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<String>(
+        'nama',
+        nama,
+      ),
+      PartValue<String>(
+        'alamat',
+        alamat,
+      ),
+      PartValue<String>(
+        'ukuran',
+        ukuran,
+      ),
+      PartValue<String>(
+        'pemilik',
+        pemilik,
+      ),
+      PartValue<String>(
+        'pengelola',
+        pengelola,
+      ),
+      PartValue<String>(
+        'jenis_tanaman_id',
+        jenisTanamanId,
+      ),
+      PartValue<String>(
+        'gambar',
+        gambar,
+      ),
+      PartValue<http.MultipartFile>(
+        'image',
+        image,
+      ),
+    ];
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
-      body: $body,
+      parts: $parts,
+      multipart: true,
       headers: $headers,
     );
     return client.send<dynamic, dynamic>($request);
@@ -96,19 +137,60 @@ final class _$ApiService extends ApiService {
   @override
   Future<Response<dynamic>> updateGreenhouse(
     String token,
+    String nama,
+    String alamat,
+    String ukuran,
+    String pemilik,
+    String pengelola,
+    String jenisTanamanId,
+    String gambar,
+    http.MultipartFile image,
     int id,
-    Map<String, dynamic> body,
   ) {
     final Uri $url = Uri.parse('/iot/greenhouse/${id}');
     final Map<String, String> $headers = {
       'Authorization': token,
     };
-    final $body = body;
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<String>(
+        'nama',
+        nama,
+      ),
+      PartValue<String>(
+        'alamat',
+        alamat,
+      ),
+      PartValue<String>(
+        'ukuran',
+        ukuran,
+      ),
+      PartValue<String>(
+        'pemilik',
+        pemilik,
+      ),
+      PartValue<String>(
+        'pengelola',
+        pengelola,
+      ),
+      PartValue<String>(
+        'jenis_tanaman_id',
+        jenisTanamanId,
+      ),
+      PartValue<String>(
+        'gambar',
+        gambar,
+      ),
+      PartValue<http.MultipartFile>(
+        'image',
+        image,
+      ),
+    ];
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
-      body: $body,
+      parts: $parts,
+      multipart: true,
       headers: $headers,
     );
     return client.send<dynamic, dynamic>($request);

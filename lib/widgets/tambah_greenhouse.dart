@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webagro/chopper_api/api_client.dart';
+import 'package:webagro/models/greenhouse.dart';
 import 'package:webagro/widgets/custom_appbar.dart';
+import 'package:webagro/widgets/greenhouse.dart';
 
 class TambahGreenhouse extends StatefulWidget {
-  const TambahGreenhouse({super.key});
-
+  TambahGreenhouse({super.key, this.greenhouse});
+  GreenhouseM? greenhouse;
   @override
   _TambahGreenhouseState createState() => _TambahGreenhouseState();
 }
@@ -33,6 +39,34 @@ class _TambahGreenhouseState extends State<TambahGreenhouse> {
     });
   }
 
+  String? token;
+
+  final apiService = ApiClient().apiService;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+    if (widget.greenhouse != null) {
+      _nameController.text = widget.greenhouse!.nama;
+      _addressController.text = widget.greenhouse!.alamat;
+      _sizeController.text = widget.greenhouse!.ukuran;
+      _ownerController.text = widget.greenhouse!.pemilik;
+      _managerController.text = widget.greenhouse!.pengelola;
+    }
+  }
+
+  Future<void> _initialize() async {
+    await _getToken();
+  }
+
+  Future<void> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('bearer_token');
+    });
+  }
+
   @override
   void dispose() {
     // Clean up the controllers when the widget is disposed
@@ -49,9 +83,10 @@ class _TambahGreenhouseState extends State<TambahGreenhouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        activityName: "Tambah Greenhouse",
-      ),
+      appBar: CustomAppBar(
+          activityName: widget.greenhouse == null
+              ? 'Tambah Greenhouse'
+              : 'Edit Greenhouse'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -60,10 +95,12 @@ class _TambahGreenhouseState extends State<TambahGreenhouse> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Center(
+                Center(
                   child: Text(
-                    'Tambah Greenhouse',
-                    style: TextStyle(
+                    widget.greenhouse == null
+                        ? 'Tambah Greenhouse'
+                        : 'Edit Greenhouse',
+                    style: const TextStyle(
                       fontSize: 24, // Larger font size
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF33697C),
@@ -152,18 +189,7 @@ class _TambahGreenhouseState extends State<TambahGreenhouse> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          final newGreenhouse = {
-                            'nama': _nameController.text,
-                            'pemilik': _ownerController.text,
-                            'alamat': _addressController.text,
-                            'ukuran': _sizeController.text,
-                            'pengelola': _managerController.text,
-                            'jenis_tanaman_id': _plantTypeController.text,
-                            'telegramId': _telegramIdController.text,
-                            'image': _image,
-                          };
-                          print('New Greenhouse Data: $newGreenhouse');
-                          Navigator.pop(context, newGreenhouse);
+                          _submit();
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -191,6 +217,122 @@ class _TambahGreenhouseState extends State<TambahGreenhouse> {
         ),
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate()) {
+      // Prepare form data
+      final newGreenhouse = {
+        'nama': _nameController.text,
+        'pemilik': _ownerController.text,
+        'alamat': _addressController.text,
+        'ukuran': _sizeController.text,
+        'pengelola': _managerController.text,
+        'jenis_tanaman_id': _plantTypeController.text,
+        'telegramId': _telegramIdController.text,
+        'image': _image,
+      };
+
+      if (widget.greenhouse == null) {
+        // Add greenhouse logic
+        _addGreenhouse(newGreenhouse);
+      } else {
+        // Edit greenhouse logic
+        _editGreenhouse(widget.greenhouse!.id, newGreenhouse);
+      }
+
+      Navigator.pop(context, newGreenhouse);
+    }
+  }
+
+  Future<void> _editGreenhouse(
+      int id, Map<String, dynamic> updatedGreenhouse) async {
+    try {
+      // Prepare image file as MultipartFile
+      final imageFile = updatedGreenhouse['image'] as XFile?;
+      http.MultipartFile? multipartImage;
+
+      if (imageFile != null) {
+        final bytes = await imageFile.readAsBytes();
+        multipartImage = http.MultipartFile(
+          'image',
+          Stream.value(bytes),
+          bytes.length,
+          filename: imageFile.name,
+          contentType: MediaType('image', imageFile.name.split('.').last),
+        );
+      }
+
+      final response = await apiService.updateGreenhouse(
+        'Bearer $token',
+        updatedGreenhouse['nama'],
+        updatedGreenhouse['alamat'],
+        updatedGreenhouse['ukuran'],
+        updatedGreenhouse['pemilik'],
+        updatedGreenhouse['pengelola'],
+        updatedGreenhouse['jenis_tanaman_id'],
+        updatedGreenhouse['gambar'],
+        multipartImage!,
+        updatedGreenhouse['id'],
+        // Ensure the image is sent
+      );
+
+      if (response.isSuccessful) {
+        Navigator.pop(context, updatedGreenhouse);
+        Navigator.pop(
+          context,
+          MaterialPageRoute(builder: (context) => const Greenhouse()),
+        );
+      } else {
+        print('Failed to add greenhouse: ${response.error}');
+      }
+    } catch (e) {
+      print('Error adding greenhouse: $e');
+    }
+  }
+
+  Future<void> _addGreenhouse(Map<String, dynamic> newGreenhouse) async {
+    try {
+      // Prepare image file as MultipartFile
+      final imageFile = newGreenhouse['image'] as XFile?;
+      http.MultipartFile? multipartImage;
+
+      if (imageFile != null) {
+        final bytes = await imageFile.readAsBytes();
+        multipartImage = http.MultipartFile(
+          'image',
+          Stream.value(bytes),
+          bytes.length,
+          filename: imageFile.name,
+          contentType: MediaType('image', imageFile.name.split('.').last),
+        );
+      }
+      // Prepare other form data
+
+      final response = await apiService.createGreenhouse(
+        'Bearer $token',
+        newGreenhouse['nama'],
+        newGreenhouse['alamat'],
+        newGreenhouse['ukuran'],
+        newGreenhouse['pemilik'],
+        newGreenhouse['pengelola'],
+        newGreenhouse['jenis_tanaman_id'],
+        newGreenhouse['gambar'],
+        multipartImage!, // Ensure the image is sent
+      );
+
+      if (response.isSuccessful) {
+        Navigator.pop(context, newGreenhouse);
+        Navigator.pop(
+          context,
+          MaterialPageRoute(builder: (context) => const Greenhouse()),
+        );
+      } else {
+        print('Failed to add greenhouse: ${response.error}');
+      }
+    } catch (e) {
+      print('Error adding greenhouse: $e');
+    }
   }
 
   Widget _buildLabeledTextField(

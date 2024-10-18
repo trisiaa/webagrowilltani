@@ -270,17 +270,3 @@ class _EditGreenhousePageState extends State<EditGreenhousePage> {
     );
   }
 }
-
-void main() {
-  runApp(const MaterialApp(
-    home: EditGreenhousePage(
-      name: 'Greenhouse A',
-      owner: 'Owner A',
-      manager: 'Manager A',
-      address: 'Address A',
-      size: '100m2',
-      plantType: 'Tomato',
-      telegramId: '123456789',
-    ),
-  ));
-}

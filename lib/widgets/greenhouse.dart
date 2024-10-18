@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:chopper/chopper.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -108,7 +109,7 @@ class _GreenhouseState extends State<Greenhouse> {
                   _buildTableSection(
                     title: 'GreenHouse',
                     table: _buildGreenHouseTable(constraints.maxWidth),
-                    addItemWidget: const TambahGreenhouse(),
+                    addItemWidget: TambahGreenhouse(),
                     onAddItem: _addGreenhouse,
                   ),
                   const SizedBox(height: 20),
@@ -283,22 +284,50 @@ class _GreenhouseState extends State<Greenhouse> {
   }
 
   Future<void> _addGreenhouse(Map<String, dynamic> newGreenhouse) async {
-    final data = {
-      'nama': newGreenhouse['nama'] ?? "",
-      'alamat': newGreenhouse['alamat'] ?? "",
-      'ukuran': newGreenhouse['ukuran'] ?? "",
-      'pemilik': newGreenhouse['pemilik'] ?? "",
-      'pengelola': newGreenhouse['pengelola'] ?? "",
-      'jenis_tanaman_id': newGreenhouse['jenis_tanaman_id'] ?? "",
-      'gambar': "gambar ${newGreenhouse['nama']}"
-    };
+    try {
+      // Prepare image file as MultipartFile
+      final imageFile = newGreenhouse['image'] as XFile?;
+      http.MultipartFile? multipartImage;
 
-    final response = await apiService.createGreenhouse('Bearer $token', data);
+      if (imageFile != null) {
+        final bytes = await imageFile.readAsBytes();
+        multipartImage = http.MultipartFile(
+          'image',
+          Stream.value(bytes),
+          bytes.length,
+          filename: imageFile.name,
+          contentType: MediaType('image', imageFile.name.split('.').last),
+        );
+      }
+      // Prepare other form data
+      final data = {
+        'nama': newGreenhouse['nama'] ?? "",
+        'alamat': newGreenhouse['alamat'] ?? "",
+        'ukuran': newGreenhouse['ukuran'] ?? "",
+        'pemilik': newGreenhouse['pemilik'] ?? "",
+        'pengelola': newGreenhouse['pengelola'] ?? "",
+        'jenis_tanaman_id': newGreenhouse['jenis_tanaman_id'] ?? "",
+      };
 
-    if (response.isSuccessful) {
-      _fetchGreenhouses(); // Refresh after adding
-    } else {
-      print('Failed to add greenhouse: ${response.error}');
+      final response = await apiService.createGreenhouse(
+        'Bearer $token',
+        data['nama'],
+        data['alamat'],
+        data['ukuran'],
+        data['pemilik'],
+        data['pengelola'],
+        data['jenis_tanaman_id'],
+        data['gambar'] ?? "", // Ensure the image is sent
+        multipartImage!, // Ensure the image is sent
+      );
+
+      if (response.isSuccessful) {
+        _fetchGreenhouses(); // Refresh after adding
+      } else {
+        print('Failed to add greenhouse: ${response.error}');
+      }
+    } catch (e) {
+      print('Error adding greenhouse: $e');
     }
   }
 
@@ -352,12 +381,15 @@ class _GreenhouseState extends State<Greenhouse> {
         DataCell(
           IconButton(
             onPressed: () async {
-              // await Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           EditGreenhousePage(greenhouse: greenhouse)),
-              // );
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TambahGreenhouse(
+                    key: Key(greenhouse.id.toString()),
+                    greenhouse: greenhouse,
+                  ),
+                ),
+              );
               _fetchGreenhouses(); // Refresh after editing
             },
             icon: const Icon(Icons.edit),
